@@ -1,5 +1,9 @@
 # SafarOps — Smart Umrah Agent Workspace
 
+## Current entry flow (3 November 2026)
+
+SafarOps2 opens directly to login. The public landing page was removed at the owner's request; its green, gold, ivory, photography, and typography are carried into the login and admin workspace. Approved users activate with email, a chosen password of at least six characters, and matching confirmation. Subsequent sign-in requires that password and a verified Supabase session. See `docs/AUTH-UPDATE.md` for verification and the new project's outstanding setup requirements. The earlier landing PRD documents are retained as historical planning context.
+
 ## Run locally
 
 Requires Node.js 18 or newer. Run `npm run dev` and open http://127.0.0.1:4173. If that port is occupied, run `npm run dev -- 4175` and open http://127.0.0.1:4175. The application keeps its existing CDN dependencies, so internet access is required for the staff workspace libraries.

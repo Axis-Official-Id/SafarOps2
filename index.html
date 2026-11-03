@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafarOps — Informasi & Konsultasi Perjalanan Umroh</title>
+    <title>SafarOps — Ruang Kerja Umroh</title>
     <meta name="description" content="Mulai persiapan Umroh Anda dengan tenang. Temukan informasi perjalanan, siapkan pertanyaan, dan konsultasikan kebutuhan paket Umroh bersama SafarOps.">
     <meta name="theme-color" content="#0B4036">
-    <meta id="page-robots" name="robots" content="index, follow">
+    <meta id="page-robots" name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://safarops-axisdigital.vercel.app/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="id_ID">
@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
-    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="admin-theme.css">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Plus Jakarta Sans & Amiri (Nuansa Elegan & Islami) -->
@@ -129,148 +129,18 @@
 </head>
 <body class="antialiased selection:bg-emerald-700 selection:text-white">
 
-    <div id="public-view" class="travel-page">
-        <a class="skip-link" href="#public-main">Lewati ke konten</a>
-        <header class="travel-header" id="travel-header">
-            <div class="travel-container header-inner">
-                <a class="travel-brand" href="#beranda" aria-label="SafarOps — Beranda"><img src="assets/brand-compass.svg" alt="" width="42" height="42"><span data-public-brand>SafarOps</span></a>
-                <button class="menu-toggle" id="travel-menu-toggle" type="button" aria-expanded="false" aria-controls="travel-navigation"><span>Menu</span><i data-lucide="menu" aria-hidden="true"></i></button>
-                <nav class="travel-navigation" id="travel-navigation" aria-label="Navigasi utama">
-                    <a href="#beranda" class="nav-home">Beranda</a><a href="#paket">Paket Umroh</a><a href="#persiapan">Persiapan</a><a href="#tentang">Tentang</a><a href="#faq">FAQ</a>
-                    <a href="#kontak" class="header-contact">Kontak <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
-                    <button class="console-trigger" type="button" data-open-console><i data-lucide="layout-dashboard" aria-hidden="true"></i> Admin Console</button>
-                </nav>
-            </div>
-        </header>
-
-        <main id="public-main">
-            <section id="beranda" class="travel-hero" aria-labelledby="hero-title">
-                <div class="hero-gallery">
-                    <picture class="hero-picture is-active"><img src="assets/jejakimani-home-video-poster.webp" alt="" width="960" height="540" fetchpriority="high" decoding="async"></picture>
-                </div>
-                <div class="hero-shade"></div>
-                <div class="travel-container hero-inner">
-                    <div class="hero-copy">
-                        <p class="travel-eyebrow light"><span></span> Perjalanan Umroh Anda dimulai di sini</p>
-                        <h1 id="hero-title">Langkah menuju<br>Baitullah, dimulai<br>dengan persiapan<br><em>yang tenang.</em></h1>
-                        <p class="hero-description">Temukan informasi paket yang tersedia dan konsultasikan kebutuhan perjalanan Anda bersama tim kami.</p>
-                        <div class="hero-actions"><a class="travel-button gold" href="#kontak" data-consult>Konsultasi Umroh <i data-lucide="arrow-up-right" aria-hidden="true"></i></a><a class="hero-secondary" href="#paket">Lihat Paket Umroh <i data-lucide="arrow-right" aria-hidden="true"></i></a></div>
-                    </div>
-                    <div class="hero-location"><span class="location-line"></span><span><span id="hero-location-name">MAKKAH AL-MUKARRAMAH</span><small>Suasana Masjidil Haram</small></span></div>
-                </div>
-                <div class="hero-bottom travel-container"><a href="#paket"><i data-lucide="arrow-down" aria-hidden="true"></i> Awali perjalanan Anda</a></div>
-            </section>
-
-            <div class="journey-strip"><div class="travel-container strip-inner"><p><span>01</span>Kenali pilihan perjalanan</p><p><span>02</span>Sampaikan kebutuhan Anda</p><p><span>03</span>Persiapkan langkah berikutnya</p></div></div>
-
-            <section id="paket" class="travel-section package-section" aria-labelledby="package-title">
-                <div class="travel-container">
-                    <div class="section-heading"><div><p class="travel-eyebrow">Pilihan perjalanan</p><h2 id="package-title">Setiap perjalanan,<br><em>berawal dari niat.</em></h2></div><p>Mulai dengan informasi yang jelas. Kenali jadwal, fasilitas, dan rincian biaya sebelum menentukan perjalanan yang sesuai.</p></div>
-                    <div class="package-feature">
-                        <div class="package-art" aria-hidden="true"><span class="art-label">MENUJU BAITULLAH</span><div class="compass-orbit"><img src="assets/brand-compass.svg" alt="" width="150" height="150"><span class="orbit-north">N</span></div><p>Satu tujuan.<br><em>Makna yang tak terhingga.</em></p><span class="art-foot">MAKKAH · MADINAH</span></div>
-                        <div class="package-information"><p class="travel-eyebrow">Paket Umroh</p><h3>Temukan pilihan<br>yang tepat untuk Anda.</h3><p>Informasi paket dapat dikonfirmasi melalui konsultasi.</p><ul class="package-checklist"><li><i data-lucide="calendar-days" aria-hidden="true"></i><span>Jadwal & durasi<small>Tanyakan pilihan waktu keberangkatan.</small></span></li><li><i data-lucide="building-2" aria-hidden="true"></i><span>Fasilitas & akomodasi<small>Konfirmasikan hotel, transportasi, dan fasilitas.</small></span></li><li><i data-lucide="wallet" aria-hidden="true"></i><span>Harga & ketersediaan<small>Minta rincian biaya dan ketentuan paket.</small></span></li></ul><a href="#kontak" class="travel-button green" data-consult>Tanyakan informasi paket <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="persiapan" class="travel-section preparation-section" aria-labelledby="preparation-title"><div class="travel-container"><div class="section-heading"><div><p class="travel-eyebrow">Bekal sebelum berangkat</p><h2 id="preparation-title">Persiapan yang baik.<br><em>Hati yang lebih tenang.</em></h2></div><p>Tiga hal yang dapat Anda tanyakan saat berkonsultasi tentang rencana perjalanan Umroh.</p></div><div class="preparation-grid"><article><span class="step-number">01 / INFORMASI</span><i data-lucide="route" aria-hidden="true"></i><h3>Kenali rincian perjalanan</h3><p>Tanyakan jadwal, lama perjalanan, maskapai, serta lokasi hotel agar Anda memahami pilihan yang tersedia.</p></article><article><span class="step-number">02 / ANGGARAN</span><i data-lucide="notebook-pen" aria-hidden="true"></i><h3>Pastikan rincian biaya</h3><p>Konfirmasikan apa yang termasuk dan belum termasuk dalam harga, beserta ketentuan pembayarannya.</p></article><article><span class="step-number">03 / PERSIAPAN</span><i data-lucide="luggage" aria-hidden="true"></i><h3>Siapkan pertanyaan Anda</h3><p>Diskusikan kebutuhan pribadi dan tanyakan dokumen serta persiapan yang berlaku untuk perjalanan Anda.</p></article></div></div></section>
-
-            <section id="tentang" class="about-section" aria-labelledby="about-title"><div class="travel-container about-inner"><div><p class="travel-eyebrow light">Mengenal SafarOps</p><h2 id="about-title">Satu niat baik.<br>Langkah yang<br><em>lebih terarah.</em></h2></div><div class="about-copy"><img src="assets/brand-compass.svg" alt="" width="62" height="62" loading="lazy"><p>Perjalanan ke Tanah Suci dimulai jauh sebelum keberangkatan. Dimulai dari niat, mencari informasi, dan menyiapkan setiap kebutuhan.</p><p>Halaman ini membantu Anda memulai: kenali informasi yang perlu ditanyakan, lalu sampaikan rencana perjalanan Anda melalui konsultasi. Rincian paket dan layanan perlu dikonfirmasi sebelum Anda menentukan pilihan.</p><a href="#kontak" data-consult>Mari bicarakan rencana Anda <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div></div></section>
-
-            <section id="faq" class="travel-section faq-section" aria-labelledby="faq-title"><div class="travel-container faq-inner"><div class="faq-intro"><p class="travel-eyebrow">Pertanyaan umum</p><h2 id="faq-title">Yang mungkin<br><em>Anda tanyakan.</em></h2><p>Beberapa informasi awal untuk membantu Anda memulai.</p><a href="#kontak" class="text-link" data-consult>Punya pertanyaan lain? <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div><div class="faq-list"><details open><summary>Bagaimana mengetahui paket yang tersedia?<span aria-hidden="true">+</span></summary><p>Jadwal, durasi, fasilitas, harga, dan ketersediaan paket perlu dikonfirmasi melalui konsultasi. Informasi paket dapat berubah, jadi pastikan rincian terbaru sebelum menentukan pilihan.</p></details><details><summary>Apa yang sebaiknya ditanyakan saat konsultasi?<span aria-hidden="true">+</span></summary><p>Sampaikan rencana waktu keberangkatan dan kebutuhan Anda. Tanyakan rincian hotel, penerbangan, fasilitas, biaya yang termasuk maupun tidak termasuk, serta dokumen yang perlu disiapkan.</p></details><details><summary>Apakah saya harus membuat akun?<span aria-hidden="true">+</span></summary><p>Tidak. Anda dapat melihat halaman ini dan menyiapkan pertanyaan tanpa akun. Admin Console digunakan oleh tim untuk mengakses ruang kerja yang sudah ada.</p></details><details><summary>Apakah formulir langsung mengirim pesan?<span aria-hidden="true">+</span></summary><p>Formulir menyiapkan draf jika kontak WhatsApp tersedia. Anda tetap perlu meninjau dan mengirimnya sendiri melalui WhatsApp. Saat nomor kontak belum tersedia, pesan tidak dikirim.</p></details><details><summary>Perlukah mengirim paspor atau data pembayaran?<span aria-hidden="true">+</span></summary><p>Tidak untuk konsultasi awal melalui halaman ini. Cukup isi nama, nomor WhatsApp, dan pertanyaan Anda. Jangan sertakan paspor, NIK, atau rincian pembayaran dalam pesan.</p></details></div></div></section>
-
-            <section id="kontak" class="travel-section contact-section" aria-labelledby="contact-title"><div class="travel-container contact-inner"><div class="contact-copy"><p class="travel-eyebrow">Mulai percakapan</p><h2 id="contact-title">Rencana besar,<br>dimulai dari<br><em>sebuah percakapan.</em></h2><p>Ceritakan rencana dan kebutuhan perjalanan Anda. Siapkan pertanyaan pertama untuk langkah menuju Baitullah.</p><div class="contact-destination"><span class="contact-icon"><i data-lucide="message-circle" aria-hidden="true"></i></span><div><span>WhatsApp konsultasi</span><strong id="public-contact-number">Segera tersedia</strong><p id="public-contact-note">Informasi kontak akan diperbarui.</p></div></div><p class="contact-reminder"><i data-lucide="lock-keyhole" aria-hidden="true"></i>Jangan sertakan data paspor, NIK, atau pembayaran.</p></div>
-                    <form id="consultation-form" class="consultation-form" novalidate><div class="form-intro"><span class="small-compass">✧</span><div><h3>Apa rencana perjalanan Anda?</h3><p>Isi detail singkat untuk menyiapkan konsultasi.</p></div></div><div class="contact-fields"><div class="travel-field"><label for="inquiry-name">Nama lengkap <span>*</span></label><input id="inquiry-name" name="name" autocomplete="name" placeholder="Nama Anda" maxlength="100" required aria-describedby="inquiry-name-error"><p class="field-error" id="inquiry-name-error"></p></div><div class="travel-field"><label for="inquiry-phone">Nomor WhatsApp <span>*</span></label><input id="inquiry-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="081234567890" maxlength="40" required aria-describedby="inquiry-phone-error inquiry-phone-help"><p class="field-error" id="inquiry-phone-error"></p><p class="field-help" id="inquiry-phone-help">Nomor digunakan untuk konsultasi; kepemilikan nomor belum diverifikasi.</p></div><div class="travel-field field-wide"><label for="inquiry-email">Email <span class="optional">(opsional)</span></label><input id="inquiry-email" name="email" type="email" autocomplete="email" placeholder="nama@email.com" maxlength="254" aria-describedby="inquiry-email-error"><p class="field-error" id="inquiry-email-error"></p></div><div class="travel-field field-wide"><label for="inquiry-message">Rencana atau pertanyaan <span class="optional">(opsional)</span></label><textarea id="inquiry-message" name="message" rows="3" maxlength="1000" placeholder="Contoh: Saya ingin mengetahui pilihan jadwal dan rincian paket untuk keluarga." aria-describedby="inquiry-message-error"></textarea><p class="field-error" id="inquiry-message-error"></p></div></div><div class="consent-field"><label for="inquiry-consent"><input id="inquiry-consent" name="consent" type="checkbox" required aria-describedby="inquiry-consent-error"><span>Saya setuju dihubungi untuk konsultasi perjalanan ini.</span></label><p class="field-error" id="inquiry-consent-error"></p></div><p id="inquiry-status" class="inquiry-status" role="status" aria-live="polite"></p><button class="travel-button green contact-submit" type="submit">Lanjutkan ke WhatsApp <i data-lucide="arrow-up-right" aria-hidden="true"></i></button><a id="whatsapp-fallback" class="draft-fallback" target="_blank" rel="noopener noreferrer" hidden>Buka draf WhatsApp</a><p class="form-note">Anda akan meninjau dan mengirim pesan sendiri melalui WhatsApp.</p></form>
-                </div></section>
-        </main>
-        <footer class="travel-footer"><div class="travel-container"><div class="footer-main"><div><a href="#beranda" class="travel-brand"><img src="assets/brand-compass.svg" alt="" width="40" height="40" loading="lazy"><span data-public-brand>SafarOps</span></a><p>Perjalanan yang baik dimulai<br>dengan persiapan yang tenang.</p></div><nav aria-label="Navigasi footer"><a href="#paket">Paket Umroh</a><a href="#persiapan">Persiapan</a><a href="#faq">FAQ</a><a href="#kontak">Kontak</a></nav><a class="footer-top" href="#beranda" aria-label="Kembali ke atas"><i data-lucide="arrow-up" aria-hidden="true"></i></a></div><div class="footer-bottom"><p>© <span id="public-year">2026</span> <span data-public-brand>SafarOps</span>. Seluruh hak cipta dilindungi.</p><button type="button" data-open-console><i data-lucide="lock-keyhole" aria-hidden="true"></i> Admin Console <i data-lucide="arrow-up-right" aria-hidden="true"></i></button></div></div></footer>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- NOTIFIKASI TOAST POP-UP SUDUT LAYAR        -->
-    <!-- ========================================== -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
-    <dialog id="console-dialog" aria-labelledby="console-title" aria-describedby="console-description"><button type="button" id="close-console" class="close-console" aria-label="Tutup Admin Console"><i data-lucide="x" aria-hidden="true"></i></button><p id="console-status" class="console-status" role="status" aria-live="polite"></p>
-
-    <!-- ========================================== -->
-    <!-- 1. HALAMAN LOGIN & AUTENTIKASI             -->
-    <!-- ========================================== -->
-    <section id="auth-view" class="min-h-screen flex items-center justify-center p-4 islamic-pattern relative overflow-hidden">
-        <!-- Ornamen Siluet Masjid di Latar Belakang Login -->
-        <div class="absolute inset-x-0 bottom-0 opacity-10 pointer-events-none flex justify-center">
-            <svg viewBox="0 0 1440 320" class="w-full max-w-7xl h-64 fill-amber-400">
-                <path d="M0,288L80,288L80,224L120,192L160,224L160,288L280,288L280,160C280,110,340,70,400,40C460,70,520,110,520,160L520,288L640,288L640,96L660,48L680,96L680,288L760,288L760,96L780,48L800,96L800,288L920,288L920,160C920,110,980,70,1040,40C1100,70,1160,110,1160,160L1160,288L1280,288L1280,224L1320,192L1360,224L1360,288L1440,288L1440,320L0,320Z"></path>
-            </svg>
-        </div>
-
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-emerald-100 relative z-10">
-            <!-- Header Login dengan Foto Banner Makkah -->
-            <div class="relative p-8 text-center bg-emerald-950 text-white overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=900&q=80" alt="Makkah" class="absolute inset-0 w-full h-full object-cover opacity-35">
-                <div class="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/75 to-emerald-900/60"></div>
-                <div class="relative z-10">
-                    <div class="safar-brand-box w-16 h-16 rounded-2xl bg-amber-400 text-navy-900 flex items-center justify-center mx-auto mb-3 shadow-lg border-2 border-white/30">
-                        <img src="assets/brand-compass.svg" alt="SafarOps — Kaaba dan kompas" width="48" height="48">
-                    </div>
-                    <p class="font-serif text-amber-300 text-base tracking-widest mb-0.5">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
-                    <h2 id="console-title" class="text-2xl font-extrabold text-white tracking-tight">Admin Console</h2>
-                    <p id="console-description" class="text-xs text-emerald-100 mt-1">SafarOps · Ruang kerja tim & administrasi</p>
-                </div>
-            </div>
-
-            <!-- Form Login -->
-            <form id="login-form" class="p-8 space-y-5">
-                <div id="auth-alert" role="alert" class="hidden p-4 rounded-xl text-xs font-semibold leading-relaxed"></div>
-
-                <div>
-                    <label for="auth-email" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Email Agen Terdaftar</label>
-                    <div class="relative">
-                        <i data-lucide="mail" class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5"></i>
-                        <input type="email" id="auth-email" autocomplete="username" required placeholder="nama@travelumroh.com"
-                            class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/20 outline-none text-sm font-medium">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="auth-password" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kata Sandi</label>
-                    <div class="relative">
-                        <i data-lucide="lock" class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5"></i>
-                        <input type="password" id="auth-password" autocomplete="current-password" required minlength="6" placeholder="•••••••• (Min. 6 karakter)"
-                            class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/20 outline-none text-sm font-medium">
-                        <button id="toggle-auth-password" class="password-toggle" type="button" aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between text-xs text-slate-500">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" id="auth-remember" checked class="rounded text-emerald-700 focus:ring-emerald-600">
-                        <span>Pertahankan sesi login di perangkat ini</span>
-                    </label>
-                </div>
-
-                <button type="submit" id="btn-login"
-                    class="w-full py-3.5 px-6 rounded-xl bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold text-sm shadow-lg shadow-amber-500/25 transition flex items-center justify-center gap-2">
-                    <span>Masuk ke Ruang Kerja</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-
-                <div class="pt-4 border-t border-slate-100 flex flex-col gap-2 text-center">
-                    <button type="button" id="btn-switch-register" class="text-xs font-bold text-emerald-800 hover:underline py-1">
-                        Belum aktivasi akun lisensi? Aktivasi Kata Sandi di sini
-                    </button>
-                    <a href="#kontak" id="license-cta-link"
-                        class="mt-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs transition">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-700"></i>
-                        <span>Tanya Akses Resmi SafarOps</span>
-                    </a>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    </dialog>
+    <section id="auth-view" class="login-screen" aria-labelledby="console-title">
+ <div class="login-story"><a class="login-brand" href="./"><img src="assets/brand-compass.svg" width="44" height="44" alt="">SafarOps</a><div class="login-story-copy"><p class="login-eyebrow">RUANG KERJA PERJALANAN UMROH</p><h1>Pelayanan yang tulus.<br><em>Perjalanan yang terarah.</em></h1><p>Kelola keberangkatan, dampingi jamaah, dan persiapkan setiap langkah dalam satu ruang kerja.</p></div><p class="login-story-footer">MAKKAH AL-MUKARRAMAH · SAFAROPS</p></div>
+ <div class="login-panel"><div class="login-panel-inner"><p class="login-eyebrow">SELAMAT DATANG KEMBALI</p><h2 id="console-title">Masuk ke ruang kerja.</h2><p id="console-description">Gunakan email terdaftar dan kata sandi Anda.</p><p id="console-status" role="status" aria-live="polite"></p>
+ <form id="login-form"><div id="auth-alert" role="alert" class="hidden"></div>
+ <label for="auth-email">Email terdaftar</label><input type="email" id="auth-email" autocomplete="username" required placeholder="nama@travelumroh.com">
+ <label for="auth-password">Kata sandi</label><div class="password-field"><input type="password" id="auth-password" autocomplete="current-password" required minlength="6" placeholder="Minimal 6 karakter"><button id="toggle-auth-password" type="button" aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button></div>
+ <div id="confirm-password-field" hidden><label for="auth-password-confirm">Konfirmasi kata sandi</label><input type="password" id="auth-password-confirm" autocomplete="new-password" minlength="6" disabled aria-describedby="confirm-password-error" placeholder="Ulangi kata sandi Anda"><p id="confirm-password-error" class="field-error" aria-live="polite"></p></div>
+ <button type="submit" id="btn-login">Masuk ke Ruang Kerja <span aria-hidden="true">↗</span></button><button type="button" id="btn-switch-register">Pertama kali masuk? Aktivasi kata sandi</button>
+ </form><p class="login-footnote">Akses diberikan sesuai peran akun Anda. Hubungi pemilik sistem untuk pendaftaran email.</p></div><p class="login-copyright">SafarOps · Melayani perjalanan dengan amanah.</p></div>
+</section>
 
     <!-- ========================================================== -->
     <!-- 1B. ONBOARDING SETUP WIZARD (KHUSUS AKUN BARU AKTIVASI)    -->
@@ -599,7 +469,7 @@
                     
                     <!-- Banner Identitas Biro Travel -->
                     <div id="agency-hero-banner" class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-950 via-emerald-900 to-navy-900 text-white p-8 md:p-12 min-h-[220px] md:min-h-[260px] flex flex-col justify-center shadow-xl border border-emerald-700/40">
-                        <div id="agency-hero-bg" class="absolute inset-0 opacity-35 bg-cover bg-center pointer-events-none transition-all duration-500" style="background-image: url('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1400&q=80');"></div>
+                        <div id="agency-hero-bg" class="absolute inset-0 opacity-35 bg-cover bg-center pointer-events-none transition-all duration-500" style="background-image: url('assets/jejakimani-home-video-poster.webp');"></div>
                         <div class="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-900/75 to-navy-900/80 pointer-events-none"></div>
                         <div class="relative z-10 flex flex-wrap items-center justify-between gap-6 w-full">
                             <div class="flex items-center gap-6">
@@ -1539,179 +1409,68 @@
          */
         const App = {
             async init() {
-                lucide.createIcons();
+                window.lucide?.createIcons();
                 this.bindAuthEvents();
-
-                if (isCloudConfigured) {
-                    const { data: { session } } = await cloudClient.auth.getSession();
-                    if (session?.user) {
-                        await this.handleAuthenticatedUser(session.user);
-                        return;
-                    }
-                }
-                const savedSession = localStorage.getItem('safarops_active_user');
-                if (savedSession) {
-                    try {
-                        await this.handleAuthenticatedUser(JSON.parse(savedSession));
-                    } catch (e) {
-                        localStorage.removeItem('safarops_active_user');
-                    }
-                }
+                if (!isCloudConfigured) return this.showAuthAlert('Layanan masuk belum tersedia. Hubungi pemilik sistem.', 'error');
+                try {
+                    const { data, error } = await cloudClient.auth.getUser();
+                    if (error || !data?.user) return;
+                    const license = await SafarAuth.authorize(cloudClient, data.user, CONFIG.SUPER_ADMIN_EMAIL);
+                    await this.handleAuthenticatedUser(data.user, license);
+                } catch(error) { this.showAuthAlert(error.message, 'error'); }
             },
-
+            setAuthMode(register) {
+                State.isRegisterMode = register;
+                const confirm = document.getElementById('auth-password-confirm');
+                document.getElementById('confirm-password-field').hidden = !register;
+                confirm.disabled = !register;
+                confirm.required = register;
+                confirm.value = '';
+                confirm.setCustomValidity('');
+                confirm.setAttribute('aria-invalid', 'false');
+                document.getElementById('confirm-password-error').textContent = '';
+                document.getElementById('auth-password').autocomplete = register ? 'new-password' : 'current-password';
+                document.getElementById('console-title').textContent = register ? 'Aktifkan akun Anda.' : 'Masuk ke ruang kerja.';
+                document.getElementById('console-description').textContent = register ? 'Pilih kata sandi minimal 6 karakter, lalu ulangi untuk konfirmasi.' : 'Gunakan email terdaftar dan kata sandi Anda.';
+                document.getElementById('btn-login').textContent = register ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗';
+                document.getElementById('btn-switch-register').textContent = register ? 'Sudah memiliki kata sandi? Masuk di sini' : 'Pertama kali masuk? Aktivasi kata sandi';
+                document.getElementById('auth-alert').classList.add('hidden');
+            },
             bindAuthEvents() {
                 const form = document.getElementById('login-form');
-                const switchBtn = document.getElementById('btn-switch-register');
-
-                switchBtn.addEventListener('click', () => {
-                    State.isRegisterMode = !State.isRegisterMode;
-                    document.getElementById('auth-alert').classList.add('hidden');
-                    document.getElementById('btn-login').innerHTML = State.isRegisterMode
-                        ? `<span>Aktivasi Lisensi & Buat Sandi</span><i data-lucide="user-check" class="w-4 h-4"></i>`
-                        : `<span>Masuk ke Ruang Kerja</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
-                    switchBtn.textContent = State.isRegisterMode
-                        ? 'Sudah memiliki kata sandi aktif? Masuk di sini'
-                        : 'Belum aktivasi akun lisensi? Aktivasi Kata Sandi di sini';
-                    lucide.createIcons();
-                });
-
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
+                const button = document.getElementById('btn-login');
+                const toggle = document.getElementById('btn-switch-register');
+                toggle.addEventListener('click', () => this.setAuthMode(!State.isRegisterMode));
+                const confirm = document.getElementById('auth-password-confirm');
+                const validateConfirm = () => {
+                    const error = State.isRegisterMode && confirm.value !== document.getElementById('auth-password').value ? 'Konfirmasi kata sandi harus sama.' : '';
+                    confirm.setCustomValidity(error);
+                    confirm.setAttribute('aria-invalid', String(Boolean(error)));
+                    document.getElementById('confirm-password-error').textContent = error;
+                };
+                confirm.addEventListener('input', validateConfirm);
+                document.getElementById('auth-password').addEventListener('input', () => { if(confirm.value) validateConfirm(); });
+                form.addEventListener('submit', async event => {
+                    event.preventDefault();
+                    if(button.disabled) return;
+                    validateConfirm();
+                    if(!form.reportValidity()) return;
                     const email = document.getElementById('auth-email').value.trim().toLowerCase();
                     const password = document.getElementById('auth-password').value;
-                    const isSuperAdminEmail = email === CONFIG.SUPER_ADMIN_EMAIL.toLowerCase();
-
-                    if (!Utils.validateEmail(email)) {
-                        return this.showAuthAlert('Format alamat email tidak valid.', 'error');
-                    }
-
-                    const submitBtn = document.getElementById('btn-login');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = `<span>Memverifikasi Lisensi...</span>`;
-
+                    const original = button.textContent;
+                    button.disabled = toggle.disabled = true;
+                    button.textContent = 'Memproses…';
                     try {
-                        if (isCloudConfigured) {
-                            const { data: lic } = await cloudClient
-                                .from('safarops_licenses')
-                                .select('*')
-                                .eq('email', email)
-                                .maybeSingle();
-
-                            if (!lic && !isSuperAdminEmail) {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = originalText;
-                                return this.showAuthAlert(
-                                    'Email ini belum terdaftar di Whitelist Lisensi. Silakan hubungi Admin atau tambahkan email ini melalui Super Admin Control Room.',
-                                    'error'
-                                );
-                            }
-
-                            if (lic && (lic.status === 'blocked' || lic.status === 'frozen')) {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = originalText;
-                                return this.showAuthAlert(
-                                    'AKSES DITOLAK: Akun lisensi Anda sedang dibekukan sementara atau diblokir oleh Administrator.',
-                                    'error'
-                                );
-                            }
-
-                            if (State.isRegisterMode) {
-                                const existingTry = await cloudClient.auth.signInWithPassword({ email, password });
-                                if (existingTry.data?.user) {
-                                    await this.handleAuthenticatedUser(existingTry.data.user, lic);
-                                    return;
-                                }
-
-                                const { data, error } = await cloudClient.auth.signUp({ email, password });
-
-                                if (error) {
-                                    const msg = (error.message || '').toLowerCase();
-                                    if (msg.includes('rate limit') || error.status === 429) {
-                                        if (lic || isSuperAdminEmail) {
-                                            const fallbackUser = {
-                                                id: lic?.id || ('usr_' + btoa(email).replace(/[^a-zA-Z0-9]/g, '')),
-                                                email: email,
-                                                is_license_verified: true
-                                            };
-                                            localStorage.setItem('safarops_active_user', JSON.stringify(fallbackUser));
-                                            Utils.toast('Lisensi terverifikasi! Membuka Setup Wizard...');
-                                            await this.handleAuthenticatedUser(fallbackUser, lic, true);
-                                            return;
-                                        }
-                                        submitBtn.disabled = false;
-                                        submitBtn.innerHTML = originalText;
-                                        return this.showAuthAlert(
-                                            'Batas pengiriman email konfirmasi tercapai (Email Rate Limit Exceeded). Matikan opsi "Confirm Email" pada menu Authentication -> Providers -> Email agar aktivasi berjalan instan tanpa batas.',
-                                            'error'
-                                        );
-                                    }
-
-                                    if (msg.includes('already registered')) {
-                                        State.isRegisterMode = false;
-                                        submitBtn.disabled = false;
-                                        submitBtn.innerHTML = originalText;
-                                        return this.showAuthAlert('Email ini sudah pernah diaktivasi. Silakan langsung masuk menggunakan kata sandi Anda.', 'info');
-                                    }
-
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = originalText;
-                                    return this.showAuthAlert(error.message, 'error');
-                                }
-
-                                const activeUser = data?.user || {
-                                    id: lic?.id || crypto.randomUUID(),
-                                    email: email
-                                };
-                                localStorage.setItem('safarops_active_user', JSON.stringify(activeUser));
-                                await this.handleAuthenticatedUser(activeUser, lic, true);
-                            } else {
-                                const { data, error } = await cloudClient.auth.signInWithPassword({ email, password });
-                                if (error) {
-                                    const msg = (error.message || '').toLowerCase();
-                                    if (msg.includes('email not confirmed') && (lic || isSuperAdminEmail)) {
-                                        const verifiedUser = { id: lic?.id || ('usr_' + btoa(email).replace(/[^a-zA-Z0-9]/g, '')), email };
-                                        localStorage.setItem('safarops_active_user', JSON.stringify(verifiedUser));
-                                        await this.handleAuthenticatedUser(verifiedUser, lic);
-                                        return;
-                                    }
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = originalText;
-                                    return this.showAuthAlert('Email atau kata sandi belum sesuai. Jika ini pertama kalinya Anda masuk, klik tombol "Aktivasi Kata Sandi di sini" di bagian bawah.', 'error');
-                                }
-                                if (data?.user) {
-                                    localStorage.setItem('safarops_active_user', JSON.stringify(data.user));
-                                    await this.handleAuthenticatedUser(data.user, lic);
-                                }
-                            }
+                        const result = await SafarAuth.submit(cloudClient, {email, password, confirmation:confirm.value, register:State.isRegisterMode}, CONFIG.SUPER_ADMIN_EMAIL);
+                        if(result.pendingConfirmation) {
+                            this.setAuthMode(false);
+                            this.showAuthAlert('Periksa email untuk konfirmasi akun, lalu masuk dengan kata sandi yang Anda buat.', 'info');
                         } else {
-                            this.loadLocalLicenses();
-                            const existingLic = State.licenses.find(l => l.email === email);
-                            if (!existingLic && !isSuperAdminEmail) {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = originalText;
-                                return this.showAuthAlert('Email belum terdaftar di Whitelist Lisensi.', 'error');
-                            }
-                            if (existingLic && (existingLic.status === 'blocked' || existingLic.status === 'frozen')) {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = originalText;
-                                return this.showAuthAlert('AKSES DITOLAK INSTAN: Akun lisensi ini telah diblokir/dibekukan oleh Super Admin.', 'error');
-                            }
-                            const mockUser = {
-                                id: existingLic?.id || ('usr_' + btoa(email).replace(/=/g, '')),
-                                email,
-                                session_token: Date.now().toString()
-                            };
-                            localStorage.setItem('safarops_active_user', JSON.stringify(mockUser));
-                            await this.handleAuthenticatedUser(mockUser, existingLic, State.isRegisterMode);
+                            await this.handleAuthenticatedUser(result.user, result.license, State.isRegisterMode);
+                            document.getElementById('auth-password').value = confirm.value = '';
                         }
-                    } catch (error) {
-                        this.showAuthAlert('Koneksi belum dapat diproses. Periksa koneksi internet, lalu coba lagi.', 'error');
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalText;
-                        lucide.createIcons();
-                    }
+                    } catch(error) { this.showAuthAlert(error.message || 'Koneksi gagal. Silakan coba lagi.', 'error'); }
+                    finally { button.disabled = toggle.disabled = false; button.textContent = State.isRegisterMode ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗'; }
                 });
             },
 
@@ -1732,10 +1491,8 @@
                 document.getElementById('app-view').classList.remove('hidden');
                 document.getElementById('user-email-display').textContent = user.email;
 
-                const isSuperAdmin =
-                    user.email.toLowerCase() === CONFIG.SUPER_ADMIN_EMAIL.toLowerCase() ||
-                    licenseRecord?.role === 'superadmin' ||
-                    user.email.toLowerCase().includes('admin');
+                const isSuperAdmin = SafarAuth.isAdmin(user, licenseRecord, CONFIG.SUPER_ADMIN_EMAIL);
+                State.isSuperAdmin = isSuperAdmin;
                 document.getElementById('superadmin-menu').classList.toggle('hidden', !isSuperAdmin);
 
                 await this.fetchWorkspaceData(licenseRecord, forceWizardOnNewActivation, isSuperAdmin);
@@ -1747,9 +1504,13 @@
                 }
                 localStorage.removeItem('safarops_active_user');
                 State.currentUser = null;
+                State.isSuperAdmin = false;
                 document.getElementById('onboarding-wizard').classList.add('hidden');
                 document.getElementById('app-view').classList.add('hidden');
                 document.getElementById('auth-view').classList.remove('hidden');
+                this.setAuthMode(false);
+                document.getElementById('auth-password').value = '';
+                document.getElementById('auth-email').focus();
                 Utils.toast('Sesi Anda telah ditutup dengan aman.');
             },
 
@@ -2122,7 +1883,7 @@
 
                 // Default ke Panorama Masjidil Haram jika agen belum upload banner sendiri
                 const heroBg = document.getElementById('agency-hero-bg');
-                const bannerUrl = p.banner_base64 || HARAMAIN_THEMES.makkah;
+                const bannerUrl = p.banner_base64 || 'assets/jejakimani-home-video-poster.webp';
                 heroBg.style.backgroundImage = `url('${bannerUrl}')`;
             },
 
@@ -3478,6 +3239,7 @@
             },
 
             async addLicenseUser(e) {
+                if (!State.isSuperAdmin) return Utils.toast('Akses administrator diperlukan.', 'error');
                 e.preventDefault();
                 const email = document.getElementById('sa-new-email').value.trim().toLowerCase();
                 const role = document.getElementById('sa-new-role').value;
@@ -3514,6 +3276,7 @@
             },
 
             async updateLicenseStatus(id, status) {
+                if (!State.isSuperAdmin) return Utils.toast('Akses administrator diperlukan.', 'error');
                 const item = State.licenses.find(l => l.id === id);
                 if (!item) return;
                 item.status = status;
@@ -3524,6 +3287,7 @@
             },
 
             async deleteLicense(id) {
+                if (!State.isSuperAdmin) return Utils.toast('Akses administrator diperlukan.', 'error');
                 if (!confirm('Hapus lisensi email buyer ini dari whitelist?')) return;
                 State.licenses = State.licenses.filter(l => l.id !== id);
                 if (isCloudConfigured) await cloudClient.from('safarops_licenses').delete().eq('id', id);
@@ -3691,6 +3455,7 @@
     </script>
     <script src="public-config.js"></script>
     <script src="validation.js"></script>
+    <script src="auth-flow.js"></script>
     <script src="public-site.js"></script>
 </body>
 </html>

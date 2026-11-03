@@ -3,7 +3,7 @@ const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
 const dist = path.join(root, 'dist');
-const files = ['index.html', 'landing.css', 'public-site.js', 'public-config.js', 'validation.js'];
+const files = ['index.html', 'admin-theme.css', 'public-site.js', 'public-config.js', 'validation.js', 'auth-flow.js'];
 const assets = ['brand-compass.svg', 'favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'jejakimani-home-video-poster.webp'];
 
 fs.mkdirSync(path.join(dist, 'assets'), { recursive: true });

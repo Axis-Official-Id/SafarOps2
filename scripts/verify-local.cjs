@@ -1,5 +1,5 @@
 const http = require('node:http');
-const paths = ['/', '/landing.css', '/public-site.js', '/public-config.js', '/validation.js', '/assets/brand-compass.svg', '/assets/favicon.svg', '/assets/favicon.ico', '/assets/apple-touch-icon.png', '/assets/icon-192.png', '/assets/icon-512.png', '/assets/jejakimani-home-video-poster.webp'];
+const paths = ['/', '/admin-theme.css', '/auth-flow.js', '/public-site.js', '/public-config.js', '/validation.js', '/assets/brand-compass.svg', '/assets/favicon.svg', '/assets/favicon.ico', '/assets/apple-touch-icon.png', '/assets/icon-192.png', '/assets/icon-512.png', '/assets/jejakimani-home-video-poster.webp'];
 const port = Number(process.argv[2] || process.env.PORT || 4173);
 async function get(path) {
   return new Promise((resolve,reject) => http.get({ hostname: '127.0.0.1', port, path }, response => {
