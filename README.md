@@ -1,16 +1,14 @@
-tes github push
-
 # SafarOps — Smart Umrah Agent Workspace
 
 ## Run locally
 
-Requires Node.js 18 or newer. Run `npm run dev` and open http://127.0.0.1:4173. The application keeps its existing CDN dependencies, so internet access is required for the staff workspace libraries.
+Requires Node.js 18 or newer. Run `npm run dev` and open http://127.0.0.1:4173. If that port is occupied, run `npm run dev -- 4175` and open http://127.0.0.1:4175. The application keeps its existing CDN dependencies, so internet access is required for the staff workspace libraries.
 
 Run `npm run check` for source/asset checks, `npm test` for input validation checks, and `npm run build` to create the static production files in `dist/`. Vercel reads the tracked `vercel.json` and runs that build.
 
 Public branding and the consultation WhatsApp destination are in `public-config.js`. The destination is intentionally blank until verified business contact details are supplied. Public packages use an information fallback; private workspace records are never used as public content. Authentication continues through the existing Supabase integration.
 
-The production package excludes developer notes, tests, original imagery, and the JEJAKIMANI reference poster. See `docs/RELEASE-VERIFICATION.md` for checks and known limits, and `assets/SOURCE-MANIFEST.md` for asset provenance.
+The production package includes the requested JEJAKIMANI homepage still and SafarOps icon assets. It excludes developer notes, tests, and the Supabase secret key. See `docs/LOCAL-VERIFICATION.md` for checks and known limits, and `assets/SOURCE-MANIFEST.md` for asset provenance.
 
 SafarOps is a web-based operations workspace and executive CRM for Indonesian Umrah travel agencies. It brings agency setup, departure planning, pilgrim management, document tracking, payment administration, and printable travel documents into one interface.
 
@@ -54,10 +52,10 @@ The application is presented in Indonesian and is designed around the day-to-day
 
 ## Local development
 
-Node.js 18 or newer is sufficient; this static application has no npm dependencies to install. The existing workspace still uses its original CDN libraries and Supabase connection.
+Node.js 18 or newer is sufficient; this static application has no npm dependencies to install. The existing workspace still uses its original CDN libraries and auth logic. SafarOps2 points to the separate Supabase project described in `docs/LOCAL-VERIFICATION.md`.
 
 ```powershell
-Set-Location -LiteralPath 'C:/Users/michu/Documents/PROGRAM/PROJECT-AXIS-YASIR/SafarOps---Axis-Digital'
+Set-Location -LiteralPath 'C:/Users/michu/Documents/PROGRAM/PROJECT-AXIS-YASIR/SafarOps2'
 npm run dev
 ```
 
@@ -67,7 +65,7 @@ Use `npm test` for validation/preservation tests, `npm run check` for source/ass
 
 Edit `public-config.js` to replace the SafarOps brand/contact placeholders with verified public details. The empty WhatsApp number intentionally disables draft preparation. Public package information uses the PRD fallback; private operational records are not marketing content.
 
-See `docs/LOCAL-VERIFICATION.md` for this chat's evidence/limits and `docs/HERO-ASSET-REVIEW.md` for logo, photo references, generated originals and rights decisions.
+See `docs/LOCAL-VERIFICATION.md` for check results and limitations, and `assets/SOURCE-MANIFEST.md` for the hero photo and icon sources.
 
 ## Intended audience
 

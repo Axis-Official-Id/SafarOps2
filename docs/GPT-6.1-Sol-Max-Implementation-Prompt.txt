@@ -1,0 +1,43 @@
+IMPLEMENTATION BRIEF — GPT-6.1 Sol Max
+
+Use the attached SafarOps-Umroh-Addition-PRD.md as the product specification. This is an addition to an existing application, not a rebuild. Follow C.R.O.C.: Context, Role, Objective, Constraints.
+
+[CONTEXT]
+The existing SafarOps site currently opens on an email/password login card. The user wants a public travel landing page for jamaah browsing Umroh services/packages and contacting the travel team. Keep the original staff workspace, all original data, and Supabase behavior intact.
+
+Repository: https://github.com/clipperww3-ops/SafarOps---Axis-Digital
+Existing site: https://safarops-axisdigital.vercel.app/
+Design references: https://www.jejakimani.com/ and https://www.dreamtour.co/
+Secondary competitor context: https://digiteraai.myscalev.com/teraumroh
+
+Repository access was unavailable during PRD research; the current stack, source paths, route names, backend calls, and data contracts are not verified. Inspect the actual code first. Never invent its architecture or claim to have inspected unavailable code.
+
+[ROLE]
+Act as a senior frontend web developer and UX designer. Build a calm, polished, responsive Indonesian travel experience using the existing brand. Preserve existing operational behavior and verify the full visitor and staff journeys.
+
+[OBJECTIVE]
+1. Inspect the source and map current entry points, login/activation/session handlers, protected workspace gate, contact mechanism, existing form payloads, and public-safe content sources.
+2. Add a public-first landing page: original-brand header, full-background Makkah hero, authentic package information or truthful fallback, evidence-backed USP section, preparation information, about/proof where verified, FAQ, contact section, and footer.
+3. Use the sourced JEJAKIMANI homepage still included at assets/jejakimani-home-video-poster.webp for the requested hero reference. Cover the banner edge to edge, crop responsively, and preserve text readability. Record asset provenance; confirm permitted production use through the existing business process. Do not copy reference-company logos, licenses, contacts, prices, testimonials, or unsupported company claims.
+4. Keep separate header actions: Kontak scrolls to customer contact; Admin Console opens the original login in an accessible modal. Reuse its existing handlers, activation, remember-session behavior, access checks, and workspace destination. Existing staff can still sign in and use the original console.
+5. Derive favicon sizes and metadata from the original brand. Align visual details with the PRD. Use Tailwind/Next.js/Node.js only where compatible with the actual existing stack. Keep current architecture; do not migrate frameworks for this change.
+6. Add the PRD's client-side field validation to public consultation and existing registration/profile phone fields. Sign-in remains email + password. Validate Indonesian mobile numbers, including normalization, allowed separators, length boundaries, and rejection examples. Preserve existing storage formats and legacy saved values.
+7. Reuse an existing contact endpoint if present. Otherwise, use an existing configured business WhatsApp destination to prepare a draft after validation. Label the action and result truthfully: a draft is not a sent message. If the destination is missing, show an unavailable state. No new lead table or integration.
+8. After P0 works, refine existing workspace presentation without changing actions, calculations, permissions, records, or workflows.
+9. Verify all applicable PRD acceptance criteria, responsive widths, modal keyboard behavior, invalid/valid forms, actual login outcomes, session/activation behavior, public-data boundaries, and preservation constraints.
+
+[CONSTRAINTS]
+- No Supabase/database logic, schema, migrations, policies, functions, storage configuration, account credentials, auth/provider settings, role logic, original-record, or security changes.
+- No seeds, data resets, imports from reference sites, production test writes, new backend services, or invented public-data proxy.
+- The user requested admin@admin / admin, but the current deployed form requires at least six password characters; admin has five. Preserve working credentials and validation. This credential change is explicitly excluded from this release pending resolution. Do not add a hardcoded login, fake session, credential alias, weakened validation, or account reset.
+- Do not add phone sign-in, OTP, or a required phone field to the login modal. The user confirmed phone validation belongs in consultation and existing registration/profile forms.
+- Do not expose private jamaah, payment, passport, rooming, or account records on the public page. Reuse an already-authorized public content path; otherwise show truthful editorial/contact fallback.
+- Client-side validation does not prove ownership or enforce server-side protection. Preserve the current server validation; report any limitation without silently changing it.
+- Preserve current payload formats, saved phone values, links, activation, remember-session, sessions, permissions, and operational behavior.
+- Use original business facts and actual configured contact details. Do not publish invented prices, package inventory, license numbers, guarantees, testimonials, or tracking capabilities.
+- Keep the public landing visible on root without a forced login. No production publication unless separately requested.
+
+[DELIVERY]
+Proceed through discovery, design, P0 implementation, limited P1 refinement, verification, and handoff. Resolve routine reversible choices independently. Record narrowly blocked items and continue all independent work.
+
+Provide a short source integration map, changed-file summary, working preview, screenshots at representative desktop/mobile sizes, source asset manifest, relevant test/check results, preservation diff review, and precise exclusions. Never label untested or excluded requirements complete. Do not ask again about the confirmed audience, separate header buttons, or phone-field placement.

@@ -94,6 +94,12 @@
             document.querySelectorAll('[data-consult]').forEach(link => link.addEventListener('click', () => {
                 requestAnimationFrame(() => $('inquiry-name').focus({ preventScroll: true }));
             }));
+            $('license-cta-link').addEventListener('click', event => {
+                event.preventDefault();
+                this.dialog.close();
+                $('kontak').scrollIntoView({ behavior: 'smooth' });
+                $('inquiry-name').focus({ preventScroll: true });
+            });
             const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 24);
             window.addEventListener('scroll', onScroll, { passive: true });
             window.matchMedia('(min-width: 901px)').addEventListener('change', closeMenu);
@@ -150,7 +156,6 @@
             new MutationObserver(() => { $('btn-switch-register').disabled = $('btn-login').disabled; })
                 .observe($('btn-login'), { attributes: true, attributeFilter: ['disabled'] });
             this.initInquiry();
-            this.initHero();
             if (this.workspaceAvailable()) {
                 WorkspaceForms.init();
                 this.adaptWorkspace();
@@ -159,94 +164,6 @@
         },
         workspaceAvailable() {
             try { return typeof App !== 'undefined'; } catch { return false; }
-        },
-        initHero() {
-            const hero = $('beranda');
-            const frames = [...hero.querySelectorAll('[data-hero-frame]')];
-            const dots = [...hero.querySelectorAll('[data-hero-dot]')];
-            const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-            const narrow = window.matchMedia('(max-width: 640px)');
-            const connection = navigator.connection;
-            const constrained = () => motion.matches || narrow.matches || connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || '');
-            const names = ['Makkah Al-Mukarramah', 'Madinah Al-Munawwarah'];
-            let index = 0;
-            let timer;
-            let pending = false;
-            let playing = !constrained();
-            let userPaused = false;
-            let hovered = false;
-            let focused = false;
-            const load = async next => {
-                const frame = frames[next];
-                const image = frame.querySelector('img');
-                frame.querySelectorAll('[data-srcset]').forEach(source => {
-                    source.srcset = source.dataset.srcset;
-                    source.removeAttribute('data-srcset');
-                });
-                if (image.dataset.src) { image.src = image.dataset.src; image.removeAttribute('data-src'); }
-                if (image.decode) await image.decode();
-                else if (!image.complete) await new Promise((resolve, reject) => {
-                    image.addEventListener('load', resolve, { once: true });
-                    image.addEventListener('error', reject, { once: true });
-                });
-                if (!image.naturalWidth) throw new Error('Hero unavailable');
-            };
-            const sync = () => {
-                $('hero-play').setAttribute('aria-pressed', String(playing));
-                $('hero-play').setAttribute('aria-label', playing ? 'Jeda pergantian gambar' : 'Putar pergantian gambar');
-                $('hero-play').firstElementChild.textContent = playing ? 'Ⅱ' : '▶';
-                clearTimeout(timer);
-                if (playing && !pending && !hovered && !focused && !document.hidden && !this.dialog.open && !this.publicView.hidden) {
-                    timer = window.setTimeout(() => select((index + 1) % frames.length, false), 9000);
-                }
-            };
-            const select = async (next, manual = true) => {
-                if (pending || next === index) return;
-                if (manual) { playing = false; userPaused = true; }
-                pending = true;
-                clearTimeout(timer);
-                $('hero-next').disabled = true;
-                $('hero-previous').disabled = true;
-                try {
-                    // Keep the current image visible until the new local asset is decoded.
-                    await load(next);
-                    frames.forEach((frame, i) => {
-                        frame.classList.toggle('is-active', i === next);
-                        frame.setAttribute('aria-hidden', String(i !== next));
-                    });
-                    dots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === next)));
-                    index = next;
-                    $('hero-slide-count').textContent = String(index + 1).padStart(2, '0') + ' / 02';
-                    $('hero-location-name').textContent = names[index].toUpperCase();
-                    if (manual) $('hero-announcement').textContent = 'Ilustrasi ' + names[index] + ', gambar ' + (index + 1) + ' dari 2.';
-                } catch {
-                    playing = false;
-                    $('hero-announcement').textContent = 'Gambar berikutnya belum dapat dimuat. Gambar saat ini tetap ditampilkan.';
-                } finally {
-                    pending = false;
-                    $('hero-next').disabled = false;
-                    $('hero-previous').disabled = false;
-                    sync();
-                }
-            };
-            $('hero-next').addEventListener('click', () => select((index + 1) % frames.length));
-            $('hero-previous').addEventListener('click', () => select((index + frames.length - 1) % frames.length));
-            dots.forEach((dot, i) => dot.addEventListener('click', () => select(i)));
-            $('hero-play').addEventListener('click', () => { playing = !playing; userPaused = !playing; sync(); });
-            hero.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovered = true; sync(); } });
-            hero.addEventListener('pointerleave', () => { hovered = false; sync(); });
-            hero.addEventListener('focusin', () => { focused = true; sync(); });
-            hero.addEventListener('focusout', event => { if (!hero.contains(event.relatedTarget)) { focused = false; sync(); } });
-            const adapt = () => { playing = !constrained() && !userPaused; sync(); };
-            motion.addEventListener('change', adapt);
-            narrow.addEventListener('change', adapt);
-            connection?.addEventListener('change', adapt);
-            document.addEventListener('visibilitychange', sync);
-            this.dialog.addEventListener('close', sync);
-            new MutationObserver(sync).observe(this.dialog, { attributes: true, attributeFilter: ['open'] });
-            $('hero-controls').hidden = false;
-            // No video, no eager second frame. Mobile, reduced motion and data-saving stay static.
-            sync();
         },
         async openConsole(trigger) {
             this.trigger = trigger;
