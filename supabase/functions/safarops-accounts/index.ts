@@ -23,8 +23,8 @@ export async function handler(req) {
   if(input.action==='activate' || input.action==='bootstrap') {
    const password=input.password, token=String(input.token||'');
    const initial=input.action==='bootstrap';
-   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[a-f0-9]{64}$/.test(token) || typeof password!=='string' || password.length<(initial?6:12) || password.length>128)
-    return json({error:'Gunakan tautan aktivasi administrator dan kata sandi minimal 12 karakter.'},400);
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[a-f0-9]{64}$/.test(token) || typeof password!=='string' || password.length<6 || password.length>128)
+    return json({error:'Gunakan tautan aktivasi administrator dan kata sandi minimal 6 karakter.'},400);
    const digest=await hash(token);
    // Match mode before claiming; ordinary invitation cannot bootstrap a weak password.
    const invitations=await api('/rest/v1/safarops_invitations?email=eq.'+encodeURIComponent(email)+'&token_hash=eq.'+digest+'&select=bootstrap');
@@ -49,7 +49,7 @@ export async function handler(req) {
   if(!licenses.length || licenses[0].status!=='active') return json({error:'Akses akun tidak aktif.'},403);
   if(input.action==='change-password') {
    if(!user.app_metadata?.password_change_required) return json({error:'Setup kata sandi sudah selesai.'},403);
-   if(typeof input.password!=='string' || input.password.length<12 || input.password.length>128) return json({error:'Kata sandi baru minimal 12 karakter.'},400);
+   if(typeof input.password!=='string' || input.password.length<6 || input.password.length>128) return json({error:'Kata sandi baru minimal 6 karakter.'},400);
    if(user.app_metadata?.password_change_required) {
     const setupToken=String(input.token||'');
     if(!/^[a-f0-9]{64}$/.test(setupToken)) return json({error:'Buka tautan setup admin pribadi untuk mengganti kata sandi sementara.'},403);

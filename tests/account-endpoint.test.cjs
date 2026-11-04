@@ -21,8 +21,14 @@ async function invoke(body,routes={},claims={}){
  finally{global.fetch=original;}
 }
 const user={id:'provider-user-id',email:'agent@example.com',app_metadata:{}};
+test('server rejects activation and password changes shorter than six characters',async()=>{
+ const activation=await invoke({action:'activate',email:user.email,token,password:'abc12'});
+ assert.equal(activation.status,400);assert.equal(activation.requests.length,0);
+ const change=await invoke({action:'change-password',password:'abc12',token},{'/auth/v1/user':{...user,app_metadata:{password_change_required:true}},'/rest/v1/safarops_licenses':[{role:'agent',status:'active'}]});
+ assert.equal(change.status,400);assert.equal(change.requests.length,2);
+});
 test('activation claims a single-use invite before creating a confirmed account',async()=>{
- const r=await invoke({action:'activate',email:user.email,token,password:'private-strong-password'},{
+ const r=await invoke({action:'activate',email:user.email,token,password:'abc123'},{
   '/rest/v1/safarops_invitations':[{bootstrap:false}],'/rest/v1/rpc/safarops_claim_invitation':[{bootstrap:false}],'/auth/v1/admin/users':{id:user.id}
  });
  assert.equal(r.status,200);assert.equal(r.requests[1].body.invitation_hash,createHash('sha256').update(token).digest('hex'));
@@ -32,7 +38,7 @@ test('a consumed invitation never creates or overwrites an account',async()=>{
  const r=await invoke({action:'activate',email:user.email,token,password:'private-strong-password'},{'/rest/v1/safarops_invitations':[{bootstrap:false}],'/rest/v1/rpc/safarops_claim_invitation':[]});
  assert.equal(r.status,403);assert.equal(r.requests.length,2);
 });
-test('an ordinary invite cannot use the short bootstrap-password path',async()=>{
+test('an ordinary invite cannot use bootstrap mode',async()=>{
  const r=await invoke({action:'bootstrap',email:user.email,token,password:'123456'},{'/rest/v1/safarops_invitations':[{bootstrap:false}]});assert.equal(r.status,403);assert.equal(r.requests.length,1);
 });
 test('an agent cannot list all accounts',async()=>{

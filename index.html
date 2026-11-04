@@ -954,7 +954,7 @@
                             <div class="flex flex-wrap gap-2">
                                 <button type="button" class="px-3 py-2 rounded-lg bg-navy-900 text-white text-xs font-bold" onclick="App.copyResetCredentials()">Salin instruksi reset</button>
                             </div>
-                            <p class="text-xs text-slate-600">Pengguna harus masuk dengan kata sandi sementara melalui tautan ini, lalu membuat kata sandi pribadi minimal 12 karakter. Kata sandi pribadi tidak terlihat oleh admin.</p>
+                            <p class="text-xs text-slate-600">Pengguna harus masuk dengan kata sandi sementara melalui tautan ini, lalu membuat kata sandi pribadi minimal 6 karakter. Kata sandi pribadi tidak terlihat oleh admin.</p>
                         </div>
                     </div>
 
@@ -1455,8 +1455,8 @@
                 document.getElementById('password-save-field').hidden = !register;
                 document.getElementById('password-save-confirm').required = register;
                 document.getElementById('password-save-confirm').checked = false;
-                document.getElementById('auth-password').minLength = register ? 12 : 6;
-                document.getElementById('auth-password-confirm').minLength = register ? 12 : 6;
+                document.getElementById('auth-password').minLength = 6;
+                document.getElementById('auth-password-confirm').minLength = 6;
                 const confirm = document.getElementById('auth-password-confirm');
                 document.getElementById('confirm-password-field').hidden = !register;
                 confirm.disabled = !register;
@@ -1467,7 +1467,7 @@
                 document.getElementById('confirm-password-error').textContent = '';
                 document.getElementById('auth-password').autocomplete = register ? 'new-password' : 'current-password';
                 document.getElementById('console-title').textContent = register ? 'Aktifkan akun Anda.' : 'Masuk ke ruang kerja.';
-                document.getElementById('console-description').textContent = register ? 'Buka tautan aktivasi pribadi dari administrator. Pilih kata sandi minimal 12 karakter, lalu simpan dengan aman.' : 'Gunakan email terdaftar dan kata sandi Anda.';
+                document.getElementById('console-description').textContent = register ? 'Buka tautan aktivasi pribadi dari administrator. Pilih kata sandi minimal 6 karakter, lalu simpan dengan aman.' : 'Gunakan email terdaftar dan kata sandi Anda.';
                 document.getElementById('btn-login').textContent = register ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗';
                 document.getElementById('btn-switch-register').textContent = register ? 'Sudah memiliki kata sandi? Masuk di sini' : 'Pertama kali masuk? Aktivasi kata sandi';
                 document.getElementById('auth-alert').classList.add('hidden');
@@ -1543,7 +1543,7 @@
                     document.getElementById('auth-password').value='';
                     document.getElementById('btn-switch-register').disabled=true;
                     document.getElementById('console-title').textContent='Amankan akun admin.';
-                    document.getElementById('console-description').textContent='Ganti kata sandi sementara dengan kata sandi unik minimal 12 karakter sebelum membuka data.';
+                    document.getElementById('console-description').textContent='Ganti kata sandi sementara dengan kata sandi unik minimal 6 karakter sebelum membuka data.';
                     document.getElementById('auth-password').focus();
                     return;
                 }
@@ -3337,7 +3337,7 @@
             async copyResetCredentials() {
                 const password=document.getElementById('temporary-password').value;
                 const link=document.getElementById('password-reset-link').value;
-                const message=`Tautan reset SafarOps: ${link}\nKata sandi sementara: ${password}\nMasuk melalui tautan tersebut lalu segera buat kata sandi pribadi minimal 12 karakter.`;
+                const message=`Tautan reset SafarOps: ${link}\nKata sandi sementara: ${password}\nMasuk melalui tautan tersebut lalu segera buat kata sandi pribadi minimal 6 karakter.`;
                 try {await navigator.clipboard.writeText(message); Utils.toast('Instruksi reset disalin.');}
                 catch {Utils.toast('Pilih dan salin data reset secara manual.','error');}
             },

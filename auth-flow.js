@@ -29,7 +29,7 @@
         if(typeof password!=='string'||password.length<6)throw new Error('Kata sandi minimal 6 karakter.');
         if(register && password!==confirmation)throw new Error('Konfirmasi kata sandi harus sama.');
         if(register){
-            if(password.length<12)throw new Error('Kata sandi baru minimal 12 karakter.');
+            if(password.length<6)throw new Error('Kata sandi baru minimal 6 karakter.');
             if(!input.token)throw new Error('Gunakan tautan aktivasi pribadi dari administrator.');
             await accountRequest(client,{action:'activate',email,password,token:input.token});
         }
