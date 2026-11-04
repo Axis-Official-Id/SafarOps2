@@ -29,12 +29,13 @@
     const mobile = matchMedia('(max-width:1023px)');
     let closed = !mobile.matches && read('safarops-sidebar-closed')==='true';
     let width = Math.min(440,Math.max(240,Number(read('safarops-sidebar-width'))||288));
-    const opener=button('Menu',()=>{setClosed(false);closer.focus();});
-    opener.className='sidebar-open no-print'; opener.setAttribute('aria-controls',sidebar.id);
-    app.prepend(opener);
+    const opener=button('',()=>{setClosed(false);closer.focus();});
+    opener.className='sidebar-open no-print'; opener.setAttribute('aria-label','Buka menu'); opener.setAttribute('aria-controls',sidebar.id); opener.innerHTML='<i data-lucide="panel-left" aria-hidden="true"></i>';
+    app.querySelector('main>header').prepend(opener);
+    document.getElementById('dashboard-search-toggle').addEventListener('click',()=>document.getElementById('global-search').focus());
     const tools=document.createElement('div'); tools.className='sidebar-tools';
-    const closer=button('Menu',()=>{setClosed(true);opener.focus();});
-    closer.setAttribute('aria-label','Tutup menu');
+    const closer=button('',()=>{setClosed(true);opener.focus();});
+    closer.setAttribute('aria-label','Tutup menu'); closer.innerHTML='<i data-lucide="panel-left-close" aria-hidden="true"></i>';
     closer.className='desktop-menu-button';
     sidebar.querySelector('h2').after(closer);
     // Replace the previous mobile-only toggle with the shared drawer controls.
@@ -50,5 +51,6 @@
     sidebar.addEventListener('keydown',e=>{if(e.key==='Escape'){setClosed(true);opener.focus();}});
     mobile.addEventListener('change',()=>setClosed(false));
     updateWidth();setClosed(closed);
+    if(window.lucide) window.lucide.createIcons();
   },{once:true});
 })();

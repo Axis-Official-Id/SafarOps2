@@ -37,3 +37,13 @@
  #app-view>aside.workspace-menu-open nav,#app-view>aside.workspace-menu-open>div.relative:not(:has(nav)){display:block!important}
  .desktop-menu-button,.sidebar-open,#app-view.sidebar-closed .sidebar-open,.workspace-quote{display:none!important}
 }
+@media(min-width:1024px){
+ #app-view main>header{justify-content:flex-start;align-items:flex-start;gap:14px}
+ .dashboard-heading{flex:1;min-width:0}
+ .dashboard-title-line{display:flex;align-items:center;gap:10px;min-height:34px}
+ .dashboard-title-line h2{margin:0}
+ .dashboard-title-line button,.sidebar-open{width:36px;height:36px;min-height:36px;display:inline-grid;place-items:center;background:#f3f3eb;color:#164a3d;border:1px solid #dfe4db;border-radius:8px}
+ .dashboard-title-line button svg,.sidebar-open svg,.desktop-menu-button svg{width:18px;height:18px}
+ #page-subtitle{margin-top:5px}
+ #app-view main>header>div:last-of-type{margin-left:auto}
+}
