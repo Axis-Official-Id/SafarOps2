@@ -556,13 +556,14 @@
                         <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <h3 class="font-bold text-navy-900">Grafik Tren Pembayaran Masuk & Pertumbuhan Jamaah</h3>
+                                    <h3 class="font-bold text-navy-900 flex items-center gap-2"><i data-lucide="chart-no-axes-combined" class="w-5 h-5 text-emerald-700" aria-hidden="true"></i>Tren Pembayaran Masuk</h3>
                                     <p class="text-xs text-slate-500">Rekapitulasi kas masuk berdasarkan riwayat mutasi pembayaran</p>
                                 </div>
                             </div>
                             <div class="h-64">
                                 <canvas id="financeChart"></canvas>
                             </div>
+                            <div class="chart-controls"><label for="finance-range">Periode</label><select id="finance-range" onchange="App.renderKPIsAndCharts()"><option value="6">6 bulan terakhir</option><option value="12">12 bulan terakhir</option><option value="year">Tahun ini</option><option value="all">Semua riwayat</option></select></div>
                         </div>
 
                         <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -2012,26 +2013,36 @@
 
                 const monthlyMap = {};
                 State.payments.filter(p => p.status === 'Confirmed').forEach(p => {
-                    const ym = (p.payment_date || '').slice(0, 7) || '2026-07';
+                    const ym = (p.payment_date || '').slice(0, 7);
+                    if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(ym)) return;
                     monthlyMap[ym] = (monthlyMap[ym] || 0) + Number(p.amount || 0);
                 });
-                const labels = Object.keys(monthlyMap).sort();
-                const values = labels.map(k => monthlyMap[k]);
+                const range=document.getElementById('finance-range').value;
+                const now=new Date();
+                let months;
+                if(range==='all' && Object.keys(monthlyMap).length) months=Object.keys(monthlyMap).sort();
+                else {
+                    const count=range==='year'?now.getMonth()+1:range==='12'?12:6;
+                    months=Array.from({length:count},(_,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-count+1+i,1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;});
+                }
+                const labels=months.map(m=>new Date(Number(m.slice(0,4)),Number(m.slice(5))-1,1).toLocaleDateString('id-ID',{month:'short',year:'numeric'}));
+                const values=months.map(k=>monthlyMap[k]||0);
 
                 const ctxFin = document.getElementById('financeChart');
                 if (State.charts.finance) State.charts.finance.destroy();
                 State.charts.finance = new Chart(ctxFin, {
                     type: 'bar',
                     data: {
-                        labels: labels.length ? labels : ['Jul 2026', 'Agu 2026', 'Sep 2026', 'Okt 2026'],
+                        labels,
                         datasets: [{
                             label: 'Dana Pembayaran Masuk (Rp)',
-                            data: values.length ? values : [0, 0, 0, 0],
+                            data: values,
+                            maxBarThickness: 48,
                             backgroundColor: '#065f46',
                             borderRadius: 8
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false},tooltip:{callbacks:{label:context=>Utils.formatIDR(context.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{maxRotation:0,maxTicksLimit:8}},y:{beginAtZero:true,grid:{color:'#e8eee9'},ticks:{callback:value=>new Intl.NumberFormat('id-ID',{notation:'compact'}).format(value)}}} }
                 });
 
                 const stageCounts = CRM_STAGES.map(st => State.jamaah.filter(j => j.crm_stage === st).length);
