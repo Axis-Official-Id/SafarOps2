@@ -10,8 +10,8 @@ function client({license={role:'agent',status:'active'},licenseError=null,authEr
  async signInWithPassword(){calls.push('signin');return {data:authError?null:{user,session},error:authError};},
  async getUser(){calls.push('getUser');return {data:{user}};},async signOut(){calls.push('signout');}}};
 }
-test('activation rejects mismatching confirmation before contacting provider',async()=>{const c=client();await assert.rejects(auth.submit(c,{...input,confirmation:'different'}),/Konfirmasi/);assert.deepEqual(c.calls,[]);});
-test('activation requires private invitation, not just email',async()=>{const c=client();await assert.rejects(auth.submit(c,{...input,token:''}),/tautan aktivasi/);assert.deepEqual(c.calls,[]);});
+test('activation needs only email and one password without a private link',async()=>{const c=client();const result=await auth.submit(c,{email:input.email,password:input.password,register:true});assert.equal(result.user.id,'test-user');assert.deepEqual(c.calls,['activate','signin','getUser','license']);});
+
 test('new passwords reject fewer than six characters',async()=>{const c=client();await assert.rejects(auth.submit(c,{...input,password:'12345',confirmation:'12345'}),/6 karakter/);assert.deepEqual(c.calls,[]);});
 test('six-character passwords can activate an invited account',async()=>{const c=client();const result=await auth.submit(c,{...input,password:'abc123',confirmation:'abc123'});assert.equal(result.user.id,'test-user');assert.deepEqual(c.calls,['activate','signin','getUser','license']);});
 test('failed invitation never authenticates',async()=>{const c=client({activationError:'Tautan sudah digunakan'});await assert.rejects(auth.submit(c,input),/sudah digunakan/);assert.deepEqual(c.calls,['activate']);});

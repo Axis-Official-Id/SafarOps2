@@ -15,6 +15,7 @@ async function invoke(body,routes={},claims={}){
   const route=routes[path];
   if(!route)throw Error('Unexpected provider call: '+path);
   const value=typeof route==='function'?route({payload,url}):route;
+  if(value instanceof Response)return value;
   return new Response(JSON.stringify(value),{status:200,headers:{'Content-Type':'application/json'}});
  };
  try{const {handler}=await modulePromise;const response=await handler(new Request('https://edge.invalid',{method:'POST',headers:{Authorization:'Bearer '+jwt(claims)},body:JSON.stringify(body)}));return {status:response.status,body:await response.json(),requests};}
@@ -27,17 +28,28 @@ test('server rejects activation and password changes shorter than six characters
  const change=await invoke({action:'change-password',password:'abc12',token},{'/auth/v1/user':{...user,app_metadata:{password_change_required:true}},'/rest/v1/safarops_licenses':[{role:'agent',status:'active'}]});
  assert.equal(change.status,400);assert.equal(change.requests.length,2);
 });
-test('activation claims a single-use invite before creating a confirmed account',async()=>{
- const r=await invoke({action:'activate',email:user.email,token,password:'abc123'},{
-  '/rest/v1/safarops_invitations':[{bootstrap:false}],'/rest/v1/rpc/safarops_claim_invitation':[{bootstrap:false}],'/auth/v1/admin/users':{id:user.id}
- });
- assert.equal(r.status,200);assert.equal(r.requests[1].body.invitation_hash,createHash('sha256').update(token).digest('hex'));
- assert.equal(r.requests[2].body.email_confirm,true);assert.equal(r.requests[2].body.app_metadata.safarops_invited,true);
+test('approved email activates without token and creates a confirmed account',async()=>{
+ const r=await invoke({action:'activate',email:user.email,password:'abc123'},{'/rest/v1/safarops_licenses':[{role:'agent',status:'active'}],'/auth/v1/admin/users':{id:user.id}});
+ assert.equal(r.status,200);assert.equal(r.requests[1].method,'POST');assert.equal(r.requests[1].body.email_confirm,true);assert.equal(r.requests[1].body.app_metadata.password_change_required,false);
 });
-test('a consumed invitation never creates or overwrites an account',async()=>{
- const r=await invoke({action:'activate',email:user.email,token,password:'private-strong-password'},{'/rest/v1/safarops_invitations':[{bootstrap:false}],'/rest/v1/rpc/safarops_claim_invitation':[]});
- assert.equal(r.status,403);assert.equal(r.requests.length,2);
+for(const [label,licenses] of [['unregistered',[]],['blocked',[{status:'blocked'}]],['frozen',[{status:'frozen'}]]])test(label+' email cannot activate',async()=>{
+ const r=await invoke({action:'activate',email:user.email,password:'abc123'},{'/rest/v1/safarops_licenses':licenses});assert.equal(r.status,403);assert.equal(r.requests.length,1);
 });
+test('activation never overwrites an existing password',async()=>{
+ const r=await invoke({action:'activate',email:user.email,password:'different-password'},{'/rest/v1/safarops_licenses':[{status:'active'}],'/auth/v1/admin/users':()=>new Response(JSON.stringify({code:'email_exists'}),{status:422})});
+ assert.equal(r.status,409);assert.match(r.body.error,/sudah memiliki akun/);assert.ok(r.requests.every(r=>r.method!=='PUT'&&r.method!=='PATCH'));
+});
+test('provider failure does not consume approval and can be retried',async()=>{
+ const r=await invoke({action:'activate',email:user.email,password:'abc123'},{'/rest/v1/safarops_licenses':[{status:'active'}],'/auth/v1/admin/users':()=>new Response('{}',{status:500})});assert.equal(r.status,502);assert.equal(r.requests.length,2);
+});
+test('super admin saves approved email and role to database',async()=>{
+ let reads=0;const r=await invoke({action:'add-account',email:'new@example.com',role:'agent'},{'/auth/v1/user':user,'/rest/v1/safarops_licenses':({payload})=>payload?[payload]:++reads===1?[{role:'superadmin',status:'active'}]:[]});
+ assert.equal(r.status,200);assert.deepEqual(r.requests.at(-1).body,{email:'new@example.com',role:'agent',status:'active'});
+});
+test('ordinary users cannot add accounts',async()=>{
+ const r=await invoke({action:'add-account',email:'new@example.com'},{'/auth/v1/user':user,'/rest/v1/safarops_licenses':[{role:'agent',status:'active'}]});assert.equal(r.status,403);assert.equal(r.requests.length,2);
+});
+
 test('an ordinary invite cannot use bootstrap mode',async()=>{
  const r=await invoke({action:'bootstrap',email:user.email,token,password:'123456'},{'/rest/v1/safarops_invitations':[{bootstrap:false}]});assert.equal(r.status,403);assert.equal(r.requests.length,1);
 });

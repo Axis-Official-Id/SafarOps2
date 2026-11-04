@@ -12,7 +12,7 @@ for (const asset of assets) {
 for (const [name, text] of [['index.html', html], ['landing.css', css], ['public-site.js', js], ['validation.js', fs.readFileSync(path.join(root, 'validation.js'), 'utf8')]]) {
   if (!text.trim()) throw new Error(`${name} is empty`);
 }
-if (html.includes('id="public-view"') || !html.includes('id="auth-password-confirm"')) throw new Error('Login entry point missing');
+if (html.includes('id="public-view"') || !html.includes('id="dismiss-auth-alert"')) throw new Error('Login entry point missing');
 if (!html.includes('id="auth-password"') || !html.includes('minlength="6"')) throw new Error('Existing sign-in validation changed');
 if (!js.includes('App.init()')) throw new Error('Workspace initialization missing');
 console.log(`Source check passed: ${assets.length} referenced local assets present.`);

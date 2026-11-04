@@ -20,7 +20,25 @@ export async function handler(req) {
  try {
   const raw=await req.text(); if(raw.length>10000) return json({error:'Request too large'},413);
   const input=JSON.parse(raw), email=String(input.email||'').trim().toLowerCase();
-  if(input.action==='activate' || input.action==='bootstrap') {
+  if(input.action==='activate') {
+   const password=input.password;
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || typeof password!=='string' || password.length<6 || password.length>128)
+    return json({error:'Gunakan email terdaftar dan kata sandi 6–128 karakter.'},400);
+   const licenses=await api('/rest/v1/safarops_licenses?email=eq.'+encodeURIComponent(email)+'&select=role,status');
+   if(!licenses.length) return json({error:'Email belum ditambahkan oleh administrator.'},403);
+   if(licenses[0].status!=='active') return json({error:'Akses akun diblokir atau dibekukan. Hubungi administrator.'},403);
+   // Creating an Auth user is atomic and rejects duplicate emails. Never update
+   // an existing password through this unauthenticated first-activation endpoint.
+   const result=await fetch(url+'/auth/v1/admin/users',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({email,password,email_confirm:true,app_metadata:{safarops_invited:true,password_change_required:false}})});
+   if(!result.ok) {
+    const failure=await result.json().catch(()=>({}));
+    if(result.status===422 || failure.code==='email_exists' || failure.error_code==='email_exists')
+     return json({error:'Email sudah memiliki akun. Masuk dengan kata sandi Anda, atau minta Reset Password kepada administrator.'},409);
+    return json({error:'Aktivasi belum berhasil. Silakan coba lagi atau hubungi administrator.'},502);
+   }
+   return json({activated:true});
+  }
+  if(input.action==='bootstrap') {
    const password=input.password, token=String(input.token||'');
    const initial=input.action==='bootstrap';
    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[a-f0-9]{64}$/.test(token) || typeof password!=='string' || password.length<6 || password.length>128)
@@ -62,6 +80,13 @@ export async function handler(req) {
   }
   if(user.app_metadata?.password_change_required || licenses[0].role!=='superadmin') return json({error:'Akses administrator diperlukan.'},403);
   if(input.action==='accounts') return json({accounts:await api('/rest/v1/rpc/safarops_account_directory','POST',{})});
+  if(input.action==='add-account') {
+   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({error:'Format email tidak valid.'},400);
+   const existing=await api('/rest/v1/safarops_licenses?email=eq.'+encodeURIComponent(email)+'&select=email');
+   if(existing.length) return json({error:'Email sudah terdaftar.'},409);
+   await api('/rest/v1/safarops_licenses','POST',{email,role:input.role==='superadmin'?'superadmin':'agent',status:'active'});
+   return json({email,added:true});
+  }
   if(input.action==='invite') {
    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({error:'Format email tidak valid.'},400);
    const existing=await api('/rest/v1/safarops_licenses?email=eq.'+encodeURIComponent(email)+'&select=email,status');

@@ -24,14 +24,11 @@
     }
     async function submit(client,input,adminEmail){
         if(!client)throw new Error('Layanan masuk belum tersedia. Hubungi pemilik sistem.');
-        const {email,password,confirmation,register}=input;
+        const {email,password,register}=input;
         if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('Format alamat email tidak valid.');
         if(typeof password!=='string'||password.length<6)throw new Error('Kata sandi minimal 6 karakter.');
-        if(register && password!==confirmation)throw new Error('Konfirmasi kata sandi harus sama.');
         if(register){
-            if(password.length<6)throw new Error('Kata sandi baru minimal 6 karakter.');
-            if(!input.token)throw new Error('Gunakan tautan aktivasi pribadi dari administrator.');
-            await accountRequest(client,{action:'activate',email,password,token:input.token});
+            await accountRequest(client,{action:'activate',email,password});
         }
         {
             const {data,error}=await client.auth.signInWithPassword({email,password});

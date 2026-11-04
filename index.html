@@ -93,7 +93,7 @@
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -136,12 +136,9 @@
     <section id="auth-view" class="login-screen" aria-labelledby="console-title">
  <div class="login-story"><a class="login-brand" href="./"><img src="assets/brand-compass.svg" width="44" height="44" alt="">SafarOps</a><div class="login-story-copy"><p class="login-eyebrow">RUANG KERJA PERJALANAN UMROH</p><h1>Pelayanan yang tulus.<br><em>Perjalanan yang terarah.</em></h1><p>Kelola keberangkatan, dampingi jamaah, dan persiapkan setiap langkah dalam satu ruang kerja.</p></div><p class="login-story-footer">MAKKAH AL-MUKARRAMAH · SAFAROPS</p></div>
  <div class="login-panel"><div class="login-panel-inner"><p class="login-eyebrow">SELAMAT DATANG KEMBALI</p><h2 id="console-title">Masuk ke ruang kerja.</h2><p id="console-description">Gunakan email terdaftar dan kata sandi Anda.</p><p id="console-status" role="status" aria-live="polite"></p>
- <form id="login-form"><div id="auth-alert" role="alert" class="hidden"></div>
+ <form id="login-form"><div id="auth-alert" role="alert" class="hidden"><span id="auth-alert-message"></span><button type="button" id="dismiss-auth-alert" aria-label="Tutup pesan">×</button></div>
  <label for="auth-email">Email terdaftar</label><input type="email" id="auth-email" autocomplete="username" required placeholder="nama@travelumroh.com">
  <label for="auth-password">Kata sandi</label><div class="password-field"><input type="password" id="auth-password" autocomplete="current-password" required minlength="6" placeholder="Minimal 6 karakter"><button id="toggle-auth-password" type="button" aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button></div>
- <div id="confirm-password-field" hidden><label for="auth-password-confirm">Konfirmasi kata sandi</label><input type="password" id="auth-password-confirm" autocomplete="new-password" minlength="6" disabled aria-describedby="confirm-password-error" placeholder="Ulangi kata sandi Anda"><p id="confirm-password-error" class="field-error" aria-live="polite"></p></div>
- <p id="password-save-warning" hidden class="login-footnote">Simpan kata sandi Anda di pengelola kata sandi. Jangan bagikan kata sandi atau tautan aktivasi.</p>
- <label id="password-save-field" hidden><input id="password-save-confirm" type="checkbox"> Saya akan menyimpan kata sandi ini dengan aman.</label>
  <p class="login-footnote">Sesi masuk tersimpan otomatis di browser ini sampai Anda keluar. Gunakan perangkat pribadi.</p>
  <button type="submit" id="btn-login">Masuk ke Ruang Kerja <span aria-hidden="true">↗</span></button><button type="button" id="btn-switch-register">Pertama kali masuk? Aktivasi kata sandi</button>
  </form><p class="login-footnote">Akses diberikan sesuai peran akun Anda. Hubungi pemilik sistem untuk pendaftaran email.</p></div><p class="login-copyright">SafarOps · Melayani perjalanan dengan amanah.</p></div>
@@ -179,7 +176,7 @@
             </div>
 
             <form id="wizard-form" onsubmit="App.completeOnboardingWizard(event)" class="p-6 md:p-8 space-y-6">
-                
+
                 <!-- STEP 1: IDENTITAS UTAMA BIRO TRAVEL -->
                 <div id="wiz-step-1" class="space-y-4">
                     <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
@@ -329,7 +326,7 @@
     <!-- 2. MAIN WORKSPACE (AGEN & SUPER ADMIN)     -->
     <!-- ========================================== -->
     <div id="app-view" class="hidden min-h-screen flex flex-col lg:flex-row">
-        
+
         <!-- SIDEBAR NAVIGASI -->
         <aside class="w-full lg:w-72 bg-emerald-900 text-white flex flex-col justify-between shrink-0 no-print relative overflow-hidden">
             <!-- Ornamen Geometris Halus di Sidebar -->
@@ -352,7 +349,7 @@
                 <!-- Menu Navigasi Utama -->
                 <nav class="p-4 space-y-1.5">
                     <p class="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-300/70">Menu Operasional</p>
-                    
+
                     <button onclick="App.switchTab('overview')" data-tab="overview" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition bg-emerald-800 text-amber-400">
                         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                         <span>Ikhtisar & Analitik</span>
@@ -472,7 +469,7 @@
                 <!-- TAB 1: IKHTISAR & ANALITIK                 -->
                 <!-- ========================================== -->
                 <div id="tab-overview" class="tab-pane space-y-6">
-                    
+
                     <!-- Banner Identitas Biro Travel -->
                     <div id="agency-hero-banner" class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-950 via-emerald-900 to-navy-900 text-white p-8 md:p-12 min-h-[220px] md:min-h-[260px] flex flex-col justify-center shadow-xl border border-emerald-700/40">
                         <div id="agency-hero-bg" class="absolute inset-0 opacity-35 bg-cover bg-center pointer-events-none transition-all duration-500" style="background-image: url('assets/jejakimani-home-video-poster.webp');"></div>
@@ -580,7 +577,7 @@
                 <!-- TAB 2: PAKET & KUOTA KEBERANGKATAN         -->
                 <!-- ========================================== -->
                 <div id="tab-packages" class="tab-pane hidden space-y-6">
-                    
+
                     <!-- Banner Khusus Paket -->
                     <div class="relative rounded-3xl overflow-hidden bg-emerald-950 text-white p-8 md:p-12 min-h-[220px] md:min-h-[240px] flex flex-col justify-center shadow-xl border border-emerald-800/40">
                         <img src="https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1400&q=80" alt="Makkah" class="absolute inset-0 w-full h-full object-cover opacity-35">
@@ -666,7 +663,7 @@
                 <!-- TAB 4: MANIFEST, DOKUMEN, KAMAR & SURAT    -->
                 <!-- ========================================== -->
                 <div id="tab-manifest" class="tab-pane hidden space-y-6">
-                    
+
                     <!-- Banner Visual Nuansa Masjid Nabawi Madinah -->
                     <div class="relative rounded-3xl overflow-hidden bg-emerald-950 text-white p-8 md:p-12 min-h-[220px] flex flex-col justify-center shadow-lg border border-emerald-800/40">
                         <img src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1400&q=80" alt="Madinah" class="absolute inset-0 w-full h-full object-cover opacity-30">
@@ -727,7 +724,7 @@
                 <!-- TAB 5: KEUANGAN, PEMBAYARAN & KWITANSI     -->
                 <!-- ========================================== -->
                 <div id="tab-finance" class="tab-pane hidden space-y-6">
-                    
+
                     <!-- Banner Visual Keuangan & Kwitansi -->
                     <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-navy-900 via-emerald-950 to-emerald-900 text-white p-8 md:p-12 min-h-[220px] flex flex-col justify-center shadow-lg border border-emerald-800/40">
                         <div class="absolute inset-0 arabesque-overlay opacity-35 pointer-events-none"></div>
@@ -996,7 +993,7 @@
 
             <form id="form-jamaah" onsubmit="App.saveJamaah(event)" class="space-y-4">
                 <input type="hidden" id="jm-id">
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1">Kode Jamaah *</label>
@@ -1452,23 +1449,11 @@
             },
             setAuthMode(register) {
                 State.isRegisterMode = register;
-                document.getElementById('password-save-warning').hidden = !register;
-                document.getElementById('password-save-field').hidden = !register;
-                document.getElementById('password-save-confirm').required = register;
-                document.getElementById('password-save-confirm').checked = false;
                 document.getElementById('auth-password').minLength = 6;
-                document.getElementById('auth-password-confirm').minLength = 6;
-                const confirm = document.getElementById('auth-password-confirm');
-                document.getElementById('confirm-password-field').hidden = !register;
-                confirm.disabled = !register;
-                confirm.required = register;
-                confirm.value = '';
-                confirm.setCustomValidity('');
-                confirm.setAttribute('aria-invalid', 'false');
-                document.getElementById('confirm-password-error').textContent = '';
+                document.getElementById('auth-password').maxLength = 128;
                 document.getElementById('auth-password').autocomplete = register ? 'new-password' : 'current-password';
                 document.getElementById('console-title').textContent = register ? 'Aktifkan akun Anda.' : 'Masuk ke ruang kerja.';
-                document.getElementById('console-description').textContent = register ? 'Buka tautan aktivasi pribadi dari administrator. Pilih kata sandi minimal 6 karakter, lalu simpan dengan aman.' : 'Gunakan email terdaftar dan kata sandi Anda.';
+                document.getElementById('console-description').textContent = register ? 'Gunakan email yang sudah ditambahkan administrator. Buat kata sandi minimal 6 karakter sekali untuk mengaktifkan akun Anda.' : 'Gunakan email terdaftar dan kata sandi Anda.';
                 document.getElementById('btn-login').textContent = register ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗';
                 document.getElementById('btn-switch-register').textContent = register ? 'Sudah memiliki kata sandi? Masuk di sini' : 'Pertama kali masuk? Aktivasi kata sandi';
                 document.getElementById('auth-alert').classList.add('hidden');
@@ -1478,23 +1463,16 @@
                 const button = document.getElementById('btn-login');
                 const toggle = document.getElementById('btn-switch-register');
                 toggle.addEventListener('click', () => this.setAuthMode(!State.isRegisterMode));
-                const confirm = document.getElementById('auth-password-confirm');
-                const validateConfirm = () => {
-                    const error = State.isRegisterMode && confirm.value !== document.getElementById('auth-password').value ? 'Konfirmasi kata sandi harus sama.' : '';
-                    confirm.setCustomValidity(error);
-                    confirm.setAttribute('aria-invalid', String(Boolean(error)));
-                    document.getElementById('confirm-password-error').textContent = error;
-                };
-                confirm.addEventListener('input', validateConfirm);
-                document.getElementById('auth-password').addEventListener('input', () => { if(confirm.value) validateConfirm(); });
+                document.getElementById('dismiss-auth-alert').addEventListener('click', () => {
+                    document.getElementById('auth-alert').classList.add('hidden');
+                    document.getElementById('auth-password').focus();
+                });
                 form.addEventListener('submit', async event => {
                     event.preventDefault();
                     if(button.disabled) return;
-                    validateConfirm();
                     if(!form.reportValidity()) return;
                     const email = document.getElementById('auth-email').value.trim().toLowerCase();
                     const password = document.getElementById('auth-password').value;
-                    const original = button.textContent;
                     button.disabled = toggle.disabled = true;
                     button.textContent = 'Memproses…';
                     try {
@@ -1508,16 +1486,16 @@
                             const {data}=await cloudClient.auth.getUser();
                             const license=await SafarAuth.authorize(cloudClient,data.user);
                             await this.handleAuthenticatedUser(data.user,license);
-                            document.getElementById('auth-password').value=confirm.value='';
+                            document.getElementById('auth-password').value='';
                             return;
                         }
-                        const result = await SafarAuth.submit(cloudClient, {email, password, confirmation:confirm.value, register:State.isRegisterMode, token:State.activationToken});
+                        const result = await SafarAuth.submit(cloudClient, {email, password, register:State.isRegisterMode, token:State.activationToken});
                         if(result.pendingConfirmation) {
                             this.setAuthMode(false);
                             this.showAuthAlert('Periksa email untuk konfirmasi akun, lalu masuk dengan kata sandi yang Anda buat.', 'info');
                         } else {
                             await this.handleAuthenticatedUser(result.user, result.license, State.isRegisterMode);
-                            document.getElementById('auth-password').value = confirm.value = '';
+                            document.getElementById('auth-password').value = '';
                         }
                     } catch(error) { this.showAuthAlert(error.message || 'Koneksi gagal. Silakan coba lagi.', 'error'); }
                     finally { button.disabled = false; toggle.disabled = Boolean(State.passwordChangeMode); button.textContent = State.passwordChangeMode ? 'Simpan Kata Sandi Baru ↗' : State.isRegisterMode ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗'; }
@@ -1526,12 +1504,12 @@
 
             showAuthAlert(msg, type) {
                 const el = document.getElementById('auth-alert');
-                el.className = `p-4 rounded-xl text-xs font-bold leading-relaxed ${
+                el.className = `auth-alert p-4 rounded-xl text-xs font-bold leading-relaxed ${
                     type === 'error'
                         ? 'bg-red-50 text-red-700 border border-red-200'
                         : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                 }`;
-                el.textContent = msg;
+                document.getElementById('auth-alert-message').textContent = msg;
                 el.classList.remove('hidden');
             },
 
@@ -2613,7 +2591,7 @@
                 const html = `
                     <div class="min-h-[1000px] relative pb-20">
                         ${this.getLetterheadHTML()}
-                        
+
                         <h2 class="text-center text-lg font-black underline uppercase tracking-wider mb-8 text-navy-900">BUKTI PEMBAYARAN</h2>
 
                         <div class="grid grid-cols-2 gap-8 text-sm mb-6">
@@ -2622,7 +2600,7 @@
                                     <tr><td class="w-32 py-1">Tanggal Transaksi</td><td>: <b>${Utils.formatDate(p.payment_date)}</b></td></tr>
                                     <tr><td class="py-1">Kode Transaksi</td><td>: <b>${Utils.escapeHTML(p.trx_code)}</b></td></tr>
                                 </table>
-                                
+
                                 <div class="mt-6 pt-3 border-t border-slate-300">
                                     <p class="font-bold text-slate-500 uppercase mb-2 tracking-wider text-xs">DATA TRAVEL :</p>
                                     <p class="font-black text-navy-900 uppercase">${Utils.escapeHTML(prof.agency_name)}</p>
@@ -2739,7 +2717,7 @@
                 const html = `
                     <div class="min-h-[1000px] relative pb-20">
                         ${this.getLetterheadHTML()}
-                        
+
                         <h2 class="text-center text-lg font-black underline uppercase tracking-wider mb-8 text-navy-900">RIWAYAT MUTASI PEMBAYARAN</h2>
 
                         <div class="grid grid-cols-2 gap-8 text-sm mb-6">
@@ -2748,7 +2726,7 @@
                                     <tr><td class="w-32 py-1">Tanggal Cetak</td><td>: <b>${Utils.formatDate(new Date().toISOString())}</b></td></tr>
                                     <tr><td class="py-1">Kode Mutasi</td><td>: <b>${Utils.escapeHTML(j.jamaah_code)}/${Utils.escapeHTML(pkg ? pkg.code : 'UMR')}/${Utils.escapeHTML(j.nik || '001')}</b></td></tr>
                                 </table>
-                                
+
                                 <div class="mt-6 pt-3 border-t border-slate-300">
                                     <p class="font-bold text-slate-500 uppercase mb-2 tracking-wider text-xs">DATA TRAVEL :</p>
                                     <p class="font-black text-navy-900 uppercase">${Utils.escapeHTML(prof.agency_name)}</p>
@@ -2863,7 +2841,7 @@
                 const html = `
                     <div class="min-h-[1000px] relative pb-20">
                         ${this.getLetterheadHTML()}
-                        
+
                         <div class="flex justify-between text-sm mb-8">
                             <table class="text-sm">
                                 <tr><td class="py-1 w-24">Nomor</td><td>: RK-${Utils.escapeHTML(j.jamaah_code)}/PT-UMR/${new Date().getFullYear()}</td></tr>
@@ -2935,7 +2913,7 @@
                 const html = `
                     <div class="min-h-[1000px] relative pb-20">
                         ${this.getLetterheadHTML()}
-                        
+
                         <div class="flex justify-between text-sm mb-8">
                             <table class="text-sm">
                                 <tr><td class="py-1 w-24">Nomor</td><td>: SC-${Utils.escapeHTML(j.jamaah_code)}/PT-UMR/${new Date().getFullYear()}</td></tr>
@@ -2965,7 +2943,7 @@
                             </div>
 
                             <p class="indent-8">Dengan ini kami menyatakan bahwa nama tersebut di atas adalah benar calon jamaah umroh yang telah terdaftar secara resmi pada biro perjalanan kami (<b class="uppercase">${Utils.escapeHTML(prof.agency_name)}</b>).</p>
-                            
+
                             <p class="indent-8">Untuk itu kami memohon kebijaksanaan Bapak/Ibu Pimpinan agar kiranya dapat memberikan izin cuti kepada yang bersangkutan selama pelaksanaan ibadah umroh berlangsung. Demikian surat permohonan izin cuti ini kami sampaikan, atas perhatian dan izin yang diberikan kami ucapkan terima kasih.</p>
                         </div>
 
@@ -3013,7 +2991,7 @@
                             <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none z-0">
                                 <img src="${prof.logo_base64 || ''}" class="w-48 h-48 object-contain">
                             </div>
-                            
+
                             <div class="relative z-10">
                                 <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-3xl flex items-center justify-center mx-auto border-[3px] border-amber-400 shadow-md">
                                     ${j.full_name.charAt(0)}
@@ -3387,7 +3365,7 @@
                             </td>
                             <td class="py-3.5 px-4 text-xs text-slate-500">${Utils.formatDate(lic.created_at)}</td>
                             <td class="py-3.5 px-4 text-right space-x-1">
-                                <button onclick="App.renewInvitation('${lic.id}')" class="px-2.5 py-1 rounded-lg border text-xs">Tautan Aktivasi</button>
+
                                 <button onclick="App.resetUserPassword('${lic.id}')" class="px-2.5 py-1 rounded-lg border border-indigo-200 text-indigo-700 text-xs font-bold">Reset Password</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'active')" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold">Aktifkan</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'frozen')" class="px-2.5 py-1 rounded-lg bg-amber-500 text-navy-900 text-xs font-bold">Bekukan</button>
@@ -3417,9 +3395,11 @@
                 if(button.disabled)return;
                 button.disabled=true;
                 try {
-                    await this.inviteAccount(email,role);
+                    await SafarAuth.accountRequest(cloudClient,{action:'add-account',email,role});
+                    await this.fetchWorkspaceData(null,false,true);
+                    await this.loadAccountDirectory();
                     e.target.reset();
-                    Utils.toast('Akses diberikan. Bagikan tautan aktivasi secara pribadi kepada pemilik email.');
+                    Utils.toast('Akun tersimpan. Pengguna dapat mengaktifkan kata sandi dengan email terdaftar.');
                 } catch(error){Utils.toast(error.message,'error');}
                 finally{button.disabled=false;}
             },
