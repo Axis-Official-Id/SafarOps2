@@ -1,8 +1,12 @@
 # SafarOps — Smart Umrah Agent Workspace
 
-## Current entry flow (3 November 2026)
+## Current entry flow (4 November 2026)
 
-SafarOps2 opens directly to login. The public landing page was removed at the owner's request; its green, gold, ivory, photography, and typography are carried into the login and admin workspace. Approved users activate with email, a chosen password of at least six characters, and matching confirmation. Subsequent sign-in requires that password and a verified Supabase session. See `docs/AUTH-UPDATE.md` for verification and the new project's outstanding setup requirements. The earlier landing PRD documents are retained as historical planning context.
+SafarOps2 opens directly to login. Approved users receive a private, single-use activation link from an administrator, choose and confirm a password of at least 12 characters, acknowledge the password-save reminder, and complete agency setup. Supabase verifies passwords and persists renewable sessions in this browser. Sign-out removes the session. Passwords and server keys are never bundled in browser files.
+
+Admins manage approved emails and account status, generate activation links, and select any activated account's workspace. Authorization is enforced by database rules and the server endpoint. Ordinary users can access only their own data, and blocked/frozen accounts lose server access. The initial administrator must complete private password setup before accessing data.
+
+See [account security and verification](docs/ACCOUNT-SECURITY.md). Previous auth/landing PRDs are historical context.
 
 ## Run locally
 

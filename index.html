@@ -138,6 +138,9 @@
  <label for="auth-email">Email terdaftar</label><input type="email" id="auth-email" autocomplete="username" required placeholder="nama@travelumroh.com">
  <label for="auth-password">Kata sandi</label><div class="password-field"><input type="password" id="auth-password" autocomplete="current-password" required minlength="6" placeholder="Minimal 6 karakter"><button id="toggle-auth-password" type="button" aria-label="Tampilkan kata sandi" aria-pressed="false"><i data-lucide="eye" aria-hidden="true"></i></button></div>
  <div id="confirm-password-field" hidden><label for="auth-password-confirm">Konfirmasi kata sandi</label><input type="password" id="auth-password-confirm" autocomplete="new-password" minlength="6" disabled aria-describedby="confirm-password-error" placeholder="Ulangi kata sandi Anda"><p id="confirm-password-error" class="field-error" aria-live="polite"></p></div>
+ <p id="password-save-warning" hidden class="login-footnote">Simpan kata sandi Anda di pengelola kata sandi. Jangan bagikan kata sandi atau tautan aktivasi.</p>
+ <label id="password-save-field" hidden><input id="password-save-confirm" type="checkbox"> Saya akan menyimpan kata sandi ini dengan aman.</label>
+ <p class="login-footnote">Sesi masuk tersimpan otomatis di browser ini sampai Anda keluar. Gunakan perangkat pribadi.</p>
  <button type="submit" id="btn-login">Masuk ke Ruang Kerja <span aria-hidden="true">↗</span></button><button type="button" id="btn-switch-register">Pertama kali masuk? Aktivasi kata sandi</button>
  </form><p class="login-footnote">Akses diberikan sesuai peran akun Anda. Hubungi pemilik sistem untuk pendaftaran email.</p></div><p class="login-copyright">SafarOps · Melayani perjalanan dengan amanah.</p></div>
 </section>
@@ -450,6 +453,7 @@
                 </div>
             </header>
 
+            <div id="account-scope-field" hidden class="p-4"><label for="account-scope">Ruang kerja akun</label> <select id="account-scope" onchange="App.selectAccount(this.value)" class="p-3 rounded-xl border"><option value="">Semua akun</option></select><p id="account-scope-status" role="status" class="text-xs">Semua akun — data baru disimpan pada akun admin.</p></div>
             <!-- SKELETON LOADING -->
             <div id="skeleton-loader" class="hidden p-6 grid grid-cols-1 md:grid-cols-4 gap-5">
                 <div class="h-28 rounded-2xl skeleton"></div>
@@ -938,7 +942,7 @@
                                 <i data-lucide="key-round" class="w-4 h-4"></i>
                                 <span>+ Whitelist Email Buyer</span>
                             </button>
-                        </form>
+                        </form><div id="invitation-result" hidden class="p-4 my-4 border rounded-xl"><label for="invitation-link">Tautan aktivasi pribadi (sekali pakai, berlaku 7 hari)</label><input id="invitation-link" readonly class="w-full p-3 border rounded" onclick="this.select()"><button type="button" onclick="navigator.clipboard.writeText(document.getElementById('invitation-link').value).then(()=>Utils.toast('Tautan disalin. Bagikan hanya kepada pemilik email.')).catch(()=>Utils.toast('Pilih dan salin tautan secara manual.','error'))">Salin tautan</button><p>Bagikan hanya kepada pemilik email. Membuat tautan baru membatalkan tautan sebelumnya.</p></div>
                     </div>
 
                     <!-- Tabel Daftar Pengguna Lisensi -->
@@ -1336,6 +1340,7 @@
          * MODUL UTILITAS, KOMPRESI GAMBAR & VALIDASI FORM
          */
         const Utils = {
+            escapeHTML(value) {return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));},
             formatIDR(num) {
                 return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
             },
@@ -1397,7 +1402,7 @@
                 const el = document.createElement('div');
                 const bg = type === 'error' ? 'bg-red-700' : 'bg-emerald-900';
                 el.className = `${bg} text-white px-4 py-3 rounded-2xl shadow-xl border border-white/10 flex items-center gap-3 text-xs font-bold pointer-events-auto transition-all duration-300`;
-                el.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-triangle' : 'check-circle'}" class="w-4 h-4 text-amber-400 shrink-0"></i><span>${message}</span>`;
+                el.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-triangle' : 'check-circle'}" class="w-4 h-4 text-amber-400 shrink-0"></i><span>${Utils.escapeHTML(message)}</span>`;
                 container.appendChild(el);
                 lucide.createIcons();
                 setTimeout(() => el.remove(), 4000);
@@ -1410,7 +1415,23 @@
         const App = {
             async init() {
                 window.lucide?.createIcons();
+                this.clearCachedWorkspaceData();
                 this.bindAuthEvents();
+                const invitation = new URLSearchParams(location.hash.slice(1));
+                if(invitation.has('setup')) {
+                    State.adminSetupToken=invitation.get('setup');
+                    document.getElementById('auth-email').value=invitation.get('email')||'';
+                    history.replaceState(null,'',location.pathname+location.search);
+                }
+                if(invitation.has('invite')) {
+                    State.activationToken=invitation.get('invite');
+                    document.getElementById('auth-email').value=invitation.get('email')||'';
+                    history.replaceState(null,'',location.pathname+location.search);
+                    this.setAuthMode(true);
+                }
+                cloudClient?.auth.onAuthStateChange((event) => {
+                    if(event==='SIGNED_OUT') setTimeout(()=>{const hadWorkspace=Boolean(State.currentUser);this.clearSessionUI();if(hadWorkspace)location.reload();},0);
+                });
                 if (!isCloudConfigured) return this.showAuthAlert('Layanan masuk belum tersedia. Hubungi pemilik sistem.', 'error');
                 try {
                     const { data, error } = await cloudClient.auth.getUser();
@@ -1421,6 +1442,12 @@
             },
             setAuthMode(register) {
                 State.isRegisterMode = register;
+                document.getElementById('password-save-warning').hidden = !register;
+                document.getElementById('password-save-field').hidden = !register;
+                document.getElementById('password-save-confirm').required = register;
+                document.getElementById('password-save-confirm').checked = false;
+                document.getElementById('auth-password').minLength = register ? 12 : 6;
+                document.getElementById('auth-password-confirm').minLength = register ? 12 : 6;
                 const confirm = document.getElementById('auth-password-confirm');
                 document.getElementById('confirm-password-field').hidden = !register;
                 confirm.disabled = !register;
@@ -1431,7 +1458,7 @@
                 document.getElementById('confirm-password-error').textContent = '';
                 document.getElementById('auth-password').autocomplete = register ? 'new-password' : 'current-password';
                 document.getElementById('console-title').textContent = register ? 'Aktifkan akun Anda.' : 'Masuk ke ruang kerja.';
-                document.getElementById('console-description').textContent = register ? 'Pilih kata sandi minimal 6 karakter, lalu ulangi untuk konfirmasi.' : 'Gunakan email terdaftar dan kata sandi Anda.';
+                document.getElementById('console-description').textContent = register ? 'Buka tautan aktivasi pribadi dari administrator. Pilih kata sandi minimal 12 karakter, lalu simpan dengan aman.' : 'Gunakan email terdaftar dan kata sandi Anda.';
                 document.getElementById('btn-login').textContent = register ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗';
                 document.getElementById('btn-switch-register').textContent = register ? 'Sudah memiliki kata sandi? Masuk di sini' : 'Pertama kali masuk? Aktivasi kata sandi';
                 document.getElementById('auth-alert').classList.add('hidden');
@@ -1461,7 +1488,20 @@
                     button.disabled = toggle.disabled = true;
                     button.textContent = 'Memproses…';
                     try {
-                        const result = await SafarAuth.submit(cloudClient, {email, password, confirmation:confirm.value, register:State.isRegisterMode}, CONFIG.SUPER_ADMIN_EMAIL);
+                        if(State.passwordChangeMode) {
+                            await SafarAuth.accountRequest(cloudClient,{action:'change-password',password,token:State.adminSetupToken});
+                            const {error}=await cloudClient.auth.signInWithPassword({email,password});
+                            if(error) throw error;
+                            State.passwordChangeMode=false;
+                            document.getElementById('auth-email').disabled=false;
+                            this.setAuthMode(false);
+                            const {data}=await cloudClient.auth.getUser();
+                            const license=await SafarAuth.authorize(cloudClient,data.user);
+                            await this.handleAuthenticatedUser(data.user,license);
+                            document.getElementById('auth-password').value=confirm.value='';
+                            return;
+                        }
+                        const result = await SafarAuth.submit(cloudClient, {email, password, confirmation:confirm.value, register:State.isRegisterMode, token:State.activationToken}, CONFIG.SUPER_ADMIN_EMAIL);
                         if(result.pendingConfirmation) {
                             this.setAuthMode(false);
                             this.showAuthAlert('Periksa email untuk konfirmasi akun, lalu masuk dengan kata sandi yang Anda buat.', 'info');
@@ -1470,7 +1510,7 @@
                             document.getElementById('auth-password').value = confirm.value = '';
                         }
                     } catch(error) { this.showAuthAlert(error.message || 'Koneksi gagal. Silakan coba lagi.', 'error'); }
-                    finally { button.disabled = toggle.disabled = false; button.textContent = State.isRegisterMode ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗'; }
+                    finally { button.disabled = false; toggle.disabled = Boolean(State.passwordChangeMode); button.textContent = State.passwordChangeMode ? 'Simpan Kata Sandi Baru ↗' : State.isRegisterMode ? 'Aktivasi Kata Sandi ↗' : 'Masuk ke Ruang Kerja ↗'; }
                 });
             },
 
@@ -1486,6 +1526,18 @@
             },
 
             async handleAuthenticatedUser(user, licenseRecord = null, forceWizardOnNewActivation = false) {
+                if(user.app_metadata?.password_change_required) {
+                    State.passwordChangeMode=true;
+                    this.setAuthMode(true);
+                    document.getElementById('auth-email').value=user.email;
+                    document.getElementById('auth-email').disabled=true;
+                    document.getElementById('auth-password').value='';
+                    document.getElementById('btn-switch-register').disabled=true;
+                    document.getElementById('console-title').textContent='Amankan akun admin.';
+                    document.getElementById('console-description').textContent='Ganti kata sandi sementara dengan kata sandi unik minimal 12 karakter sebelum membuka data.';
+                    document.getElementById('auth-password').focus();
+                    return;
+                }
                 State.currentUser = user;
                 document.getElementById('auth-view').classList.add('hidden');
                 document.getElementById('app-view').classList.remove('hidden');
@@ -1495,13 +1547,33 @@
                 State.isSuperAdmin = isSuperAdmin;
                 document.getElementById('superadmin-menu').classList.toggle('hidden', !isSuperAdmin);
 
+                if(isSuperAdmin) await this.loadAccountDirectory();
+                document.getElementById('account-scope-field').hidden=!isSuperAdmin;
                 await this.fetchWorkspaceData(licenseRecord, forceWizardOnNewActivation, isSuperAdmin);
             },
 
+            clearCachedWorkspaceData() {
+                for(const key of Object.keys(localStorage)) if(/^safarops_(pk_|jm_|pay_|prof_|global_licenses$|active_user$)/.test(key)) localStorage.removeItem(key);
+            },
+            clearSessionUI() {
+                this.clearCachedWorkspaceData();
+                State.currentUser=null; State.isSuperAdmin=false; State.passwordChangeMode=false;
+                State.workspaceUserId=null; State.workspaceEmail=null; State.accountDirectory=[]; State.activationToken=null; State.adminSetupToken=null;
+                State.packages=[]; State.jamaah=[]; State.payments=[]; State.licenses=[];
+                document.getElementById('auth-email').disabled=false;
+                document.getElementById('btn-switch-register').disabled=false;
+                document.getElementById('app-view').classList.add('hidden');
+                document.getElementById('auth-view').classList.remove('hidden');
+                document.getElementById('onboarding-wizard').classList.add('hidden');
+                document.getElementById('invitation-result').hidden=true;
+                document.getElementById('invitation-link').value='';
+                this.setAuthMode(false);
+            },
             async logout() {
                 if (isCloudConfigured) {
                     try { await cloudClient.auth.signOut(); } catch (e) {}
                 }
+                this.clearSessionUI();
                 localStorage.removeItem('safarops_active_user');
                 State.currentUser = null;
                 State.isSuperAdmin = false;
@@ -1511,7 +1583,7 @@
                 this.setAuthMode(false);
                 document.getElementById('auth-password').value = '';
                 document.getElementById('auth-email').focus();
-                Utils.toast('Sesi Anda telah ditutup dengan aman.');
+                location.reload();
             },
 
             /**
@@ -1521,8 +1593,8 @@
                 const loader = document.getElementById('skeleton-loader');
                 loader.classList.remove('hidden');
 
-                const uid = State.currentUser.id;
-                const email = State.currentUser.email.toLowerCase();
+                const uid = State.workspaceUserId || State.currentUser.id;
+                const email = State.workspaceEmail || State.currentUser.email.toLowerCase();
 
                 const savedLocalProfile = localStorage.getItem(`safarops_prof_${email}`) || localStorage.getItem(`safarops_prof_${uid}`);
                 if (savedLocalProfile) {
@@ -1551,9 +1623,10 @@
                             cloudClient.from('safarops_payments').select('*').order('payment_date', { ascending: false }),
                             cloudClient.from('safarops_licenses').select('*').order('created_at', { ascending: false })
                         ]);
-                        State.packages = pkRes.data || JSON.parse(localStorage.getItem(`safarops_pk_${uid}`) || '[]');
-                        State.jamaah = jmRes.data || JSON.parse(localStorage.getItem(`safarops_jm_${uid}`) || '[]');
-                        State.payments = payRes.data || JSON.parse(localStorage.getItem(`safarops_pay_${uid}`) || '[]');
+                        for(const response of [pkRes,jmRes,payRes,licRes]) if(response.error) throw response.error;
+                        State.packages = (pkRes.data || []).filter(row=>!State.workspaceUserId || row.user_id===State.workspaceUserId);
+                        State.jamaah = (jmRes.data || []).filter(row=>!State.workspaceUserId || row.user_id===State.workspaceUserId);
+                        State.payments = (payRes.data || []).filter(row=>!State.workspaceUserId || row.user_id===State.workspaceUserId);
                         State.licenses = licRes.data || [];
 
                         const myLic = licenseRecord || State.licenses.find(l => (l.email || '').toLowerCase() === email);
@@ -1577,7 +1650,8 @@
                             }
                         }
                     } catch (err) {
-                        console.warn('Menggunakan sinkronisasi cadangan lokal:', err);
+                        State.packages=[]; State.jamaah=[]; State.payments=[];
+                        Utils.toast('Data cloud gagal dimuat. Coba masuk kembali.', 'error');
                     }
                 } else {
                     State.packages = JSON.parse(localStorage.getItem(`safarops_pk_${uid}`) || '[]');
@@ -1597,9 +1671,10 @@
             },
 
             persistLocal() {
+                if(isCloudConfigured) return;
                 if (!State.currentUser) return;
-                const uid = State.currentUser.id;
-                const email = State.currentUser.email.toLowerCase();
+                const uid = State.workspaceUserId || State.currentUser.id;
+                const email = State.workspaceEmail || State.currentUser.email.toLowerCase();
                 localStorage.setItem(`safarops_pk_${uid}`, JSON.stringify(State.packages));
                 localStorage.setItem(`safarops_jm_${uid}`, JSON.stringify(State.jamaah));
                 localStorage.setItem(`safarops_pay_${uid}`, JSON.stringify(State.payments));
@@ -1615,7 +1690,7 @@
                     State.licenses = [
                         { id: 'lic-1', email: CONFIG.SUPER_ADMIN_EMAIL, agency_name: 'SafarOps HQ', role: 'superadmin', status: 'active', is_setup: true, created_at: '2026-01-10' }
                     ];
-                    localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
+                    if(!isCloudConfigured) localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
                 }
             },
 
@@ -1751,7 +1826,7 @@
 
             async syncAgencyProfileToCloud() {
                 if (!State.currentUser) return;
-                const email = State.currentUser.email.toLowerCase();
+                const email = State.workspaceEmail || State.currentUser.email.toLowerCase();
                 const p = State.agencyProfile;
 
                 const licIdx = State.licenses.findIndex(l => (l.email || '').toLowerCase() === email);
@@ -1764,7 +1839,7 @@
                         director_name: p.director_name,
                         is_setup: true
                     };
-                    localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
+                    if(!isCloudConfigured) localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
                 }
 
                 if (isCloudConfigured) {
@@ -1779,22 +1854,10 @@
                         logo_base64: p.logo_base64,
                         banner_base64: p.banner_base64
                     };
-                    const { error } = await cloudClient
-                        .from('safarops_licenses')
-                        .update(fullUpdate)
-                        .eq('email', email);
-
-                    if (error) {
-                        await cloudClient
-                            .from('safarops_licenses')
-                            .update({
-                                agency_name: p.agency_name,
-                                agency_address: p.agency_address,
-                                agency_phone: p.agency_phone,
-                                director_name: p.director_name
-                            })
-                            .eq('email', email);
-                    }
+                    const {error} = State.isSuperAdmin && State.workspaceEmail
+                        ? await cloudClient.from('safarops_licenses').update(fullUpdate).eq('email',email)
+                        : await cloudClient.rpc('safarops_save_profile',{profile:fullUpdate});
+                    if(error) throw new Error('Profil belum tersimpan. Silakan coba kembali.');
                 }
             },
 
@@ -1891,19 +1954,19 @@
                 const filterSel = document.getElementById('crm-filter-package');
                 const currentVal = filterSel.value;
                 filterSel.innerHTML = `<option value="ALL">Semua Batch Keberangkatan</option>` +
-                    State.packages.map(p => `<option value="${p.id}">(${p.code}) ${p.name}</option>`).join('');
+                    State.packages.map(p => `<option value="${p.id}">(${Utils.escapeHTML(p.code)}) ${Utils.escapeHTML(p.name)}</option>`).join('');
                 filterSel.value = currentVal || 'ALL';
 
                 const modalPkgSel = document.getElementById('jm-package-id');
                 modalPkgSel.innerHTML = `<option value="">-- Pilih Paket Keberangkatan --</option>` +
-                    State.packages.map(p => `<option value="${p.id}" data-price="${p.price}">(${p.code}) ${p.name} - ${Utils.formatIDR(p.price)}</option>`).join('');
+                    State.packages.map(p => `<option value="${p.id}" data-price="${Utils.escapeHTML(p.price)}">(${Utils.escapeHTML(p.code)}) ${Utils.escapeHTML(p.name)} - ${Utils.formatIDR(p.price)}</option>`).join('');
 
                 const payJmSel = document.getElementById('pay-jamaah-id');
                 payJmSel.innerHTML = State.jamaah.map(j => {
                     const net = Number(j.package_price || 0) - Number(j.discount || 0);
                     const paid = Utils.calcPaidByJamaah(j.id);
                     const rem = Math.max(0, net - paid);
-                    return `<option value="${j.id}">(${j.jamaah_code}) ${j.full_name} — Sisa Tagihan: ${Utils.formatIDR(rem)}</option>`;
+                    return `<option value="${j.id}">(${Utils.escapeHTML(j.jamaah_code)}) ${Utils.escapeHTML(j.full_name)} — Sisa Tagihan: ${Utils.formatIDR(rem)}</option>`;
                 }).join('');
             },
 
@@ -2032,18 +2095,18 @@
                             <div class="premium-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between">
                                 <div>
                                     <div class="relative h-40 overflow-hidden bg-emerald-950">
-                                        <img src="${imgUrl}" alt="${p.name}" class="w-full h-full object-cover">
+                                        <img src="${imgUrl}" alt="${Utils.escapeHTML(p.name)}" class="w-full h-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/30 to-transparent"></div>
                                         <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
-                                            <span class="px-2.5 py-1 rounded-lg bg-emerald-950/80 backdrop-blur text-amber-300 text-[11px] font-extrabold border border-white/15">${p.code}</span>
+                                            <span class="px-2.5 py-1 rounded-lg bg-emerald-950/80 backdrop-blur text-amber-300 text-[11px] font-extrabold border border-white/15">${Utils.escapeHTML(p.code)}</span>
                                             <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase shadow ${statusBg}">${displayStatus}</span>
                                         </div>
                                         <div class="absolute bottom-3 left-4 right-4 text-white">
                                             <p class="text-[11px] text-amber-300 font-bold flex items-center gap-1">
                                                 <i data-lucide="plane" class="w-3.5 h-3.5"></i>
-                                                <span>${p.airline} • ${p.duration_days} Hari</span>
+                                                <span>${Utils.escapeHTML(p.airline)} • ${Utils.escapeHTML(p.duration_days)} Hari</span>
                                             </p>
-                                            <h4 class="font-extrabold text-base leading-snug truncate mt-0.5">${p.name}</h4>
+                                            <h4 class="font-extrabold text-base leading-snug truncate mt-0.5">${Utils.escapeHTML(p.name)}</h4>
                                         </div>
                                     </div>
 
@@ -2100,13 +2163,13 @@
 
                     return `
                         <tr class="hover:bg-slate-50/80">
-                            <td class="py-3.5 px-4 font-bold text-navy-900">${p.code}</td>
-                            <td class="py-3.5 px-4 font-semibold">${p.name}</td>
+                            <td class="py-3.5 px-4 font-bold text-navy-900">${Utils.escapeHTML(p.code)}</td>
+                            <td class="py-3.5 px-4 font-semibold">${Utils.escapeHTML(p.name)}</td>
                             <td class="py-3.5 px-4 text-xs">${Utils.formatDate(p.departure_date)}</td>
-                            <td class="py-3.5 px-4 text-xs">${p.airline}</td>
-                            <td class="py-3.5 px-4 text-xs">${p.duration_days} Hari</td>
+                            <td class="py-3.5 px-4 text-xs">${Utils.escapeHTML(p.airline)}</td>
+                            <td class="py-3.5 px-4 text-xs">${Utils.escapeHTML(p.duration_days)} Hari</td>
                             <td class="py-3.5 px-4 font-bold text-emerald-800">${Utils.formatIDR(p.price)}</td>
-                            <td class="py-3.5 px-4 text-center font-semibold">${p.quota} Pax</td>
+                            <td class="py-3.5 px-4 text-center font-semibold">${Utils.escapeHTML(p.quota)} Pax</td>
                             <td class="py-3.5 px-4 text-center font-bold text-emerald-700">${filled} Pax</td>
                             <td class="py-3.5 px-4 text-center font-bold ${rem <= 0 ? 'text-red-600' : 'text-slate-700'}">${rem} Pax</td>
                             <td class="py-3.5 px-4 text-center">
@@ -2156,15 +2219,15 @@
                                              class="premium-card bg-white p-3.5 rounded-xl shadow-sm border border-slate-200/80 cursor-grab active:cursor-grabbing hover:border-emerald-600 transition space-y-2.5">
                                             <div class="flex items-start justify-between gap-2">
                                                 <div>
-                                                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800">${j.jamaah_code}</span>
-                                                    <h4 class="font-bold text-sm text-navy-900 mt-1 leading-snug">${j.full_name}</h4>
+                                                    <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800">${Utils.escapeHTML(j.jamaah_code)}</span>
+                                                    <h4 class="font-bold text-sm text-navy-900 mt-1 leading-snug">${Utils.escapeHTML(j.full_name)}</h4>
                                                 </div>
                                                 <button onclick="App.openJamaahModal('${j.id}')" class="text-slate-400 hover:text-navy-900">
                                                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                                                 </button>
                                             </div>
 
-                                            <p class="text-[11px] text-slate-500 font-medium truncate">${pkg ? pkg.name : 'Belum Pilih Batch'}</p>
+                                            <p class="text-[11px] text-slate-500 font-medium truncate">${Utils.escapeHTML(pkg ? pkg.name : 'Belum Pilih Batch')}</p>
 
                                             <div class="text-[11px] space-y-1 pt-1 border-t border-slate-100">
                                                 <div class="flex justify-between">
@@ -2181,13 +2244,13 @@
                                             </div>
 
                                             <div class="flex items-center justify-between pt-2">
-                                                <a href="https://wa.me/${Utils.normalizePhone(j.phone)}?text=${encodeURIComponent(`Assalamualaikum Bapak/Ibu ${j.full_name}, kami dari ${State.agencyProfile.agency_name} menginformasikan status pendaftaran Umroh Anda (${j.jamaah_code}).`)}"
+                                                <a href="https://wa.me/${Utils.normalizePhone(j.phone)}?text=${encodeURIComponent(`Assalamualaikum Bapak/Ibu ${Utils.escapeHTML(j.full_name)}, kami dari ${State.agencyProfile.agency_name} menginformasikan status pendaftaran Umroh Anda (${Utils.escapeHTML(j.jamaah_code)}).`)}"
                                                    target="_blank"
                                                    class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center gap-1">
                                                     <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                                                     <span>Follow Up WA</span>
                                                 </a>
-                                                <span class="text-[10px] font-semibold text-slate-400">${j.room_type}</span>
+                                                <span class="text-[10px] font-semibold text-slate-400">${Utils.escapeHTML(j.room_type)}</span>
                                             </div>
                                         </div>
                                     `;
@@ -2254,21 +2317,21 @@
                     return `
                         <tr class="hover:bg-slate-50/80">
                             <td class="py-3.5 px-3">
-                                <span class="font-extrabold text-xs text-emerald-800 block">${j.jamaah_code}</span>
-                                <span class="text-[11px] text-slate-400">${j.nik || '-'}</span>
+                                <span class="font-extrabold text-xs text-emerald-800 block">${Utils.escapeHTML(j.jamaah_code)}</span>
+                                <span class="text-[11px] text-slate-400">${Utils.escapeHTML(j.nik || '-')}</span>
                             </td>
                             <td class="py-3.5 px-3">
-                                <p class="font-bold text-navy-900">${j.full_name}</p>
-                                <p class="text-xs text-slate-500">+${Utils.normalizePhone(j.phone)} • ${j.gender}</p>
+                                <p class="font-bold text-navy-900">${Utils.escapeHTML(j.full_name)}</p>
+                                <p class="text-xs text-slate-500">+${Utils.normalizePhone(j.phone)} • ${Utils.escapeHTML(j.gender)}</p>
                             </td>
                             <td class="py-3.5 px-3 text-xs">
-                                <p class="font-semibold text-navy-900">${pkg ? pkg.name : '-'}</p>
-                                <p class="text-slate-500">Paspor: <b>${j.passport_number || 'Belum Ada'}</b></p>
+                                <p class="font-semibold text-navy-900">${Utils.escapeHTML(pkg ? pkg.name : '-')}</p>
+                                <p class="text-slate-500">Paspor: <b>${Utils.escapeHTML(j.passport_number || 'Belum Ada')}</b></p>
                             </td>
                             <td class="py-3.5 px-3 text-xs">
-                                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold">${j.room_type}</span>
-                                <span class="font-semibold text-slate-700 ml-1">${j.room_group || '-'}</span>
-                                <p class="text-[11px] text-slate-500 mt-0.5">Mahram: <b>${j.mahram_group || '-'}</b> (${j.mahram_relation || '-'})</p>
+                                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold">${Utils.escapeHTML(j.room_type)}</span>
+                                <span class="font-semibold text-slate-700 ml-1">${Utils.escapeHTML(j.room_group || '-')}</span>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Mahram: <b>${Utils.escapeHTML(j.mahram_group || '-')}</b> (${Utils.escapeHTML(j.mahram_relation || '-')})</p>
                             </td>
                             <td class="py-3.5 px-3">
                                 <div class="flex flex-wrap gap-1.5">
@@ -2336,11 +2399,11 @@
                 roomBox.innerHTML = Object.entries(rooms).map(([roomName, members]) => `
                     <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-extrabold text-emerald-900">${roomName}</span>
+                            <span class="text-xs font-extrabold text-emerald-900">${Utils.escapeHTML(roomName)}</span>
                             <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">${members.length} Jamaah</span>
                         </div>
                         <ul class="space-y-1 text-xs text-slate-600">
-                            ${members.map(m => `<li class="truncate">• <b>${m.full_name}</b> (${m.gender})</li>`).join('')}
+                            ${members.map(m => `<li class="truncate">• <b>${Utils.escapeHTML(m.full_name)}</b> (${Utils.escapeHTML(m.gender)})</li>`).join('')}
                         </ul>
                     </div>
                 `).join('') || `<p class="text-xs text-slate-400 col-span-2">Belum ada data kamar.</p>`;
@@ -2348,11 +2411,11 @@
                 mahramBox.innerHTML = Object.entries(mahrams).map(([groupName, members]) => `
                     <div class="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200/70">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-extrabold text-navy-900">${groupName}</span>
+                            <span class="text-xs font-extrabold text-navy-900">${Utils.escapeHTML(groupName)}</span>
                             <span class="px-2 py-0.5 rounded-full bg-amber-200 text-navy-900 text-[10px] font-bold">${members.length} Anggota</span>
                         </div>
                         <ul class="space-y-1 text-xs text-slate-600">
-                            ${members.map(m => `<li class="truncate">• <b>${m.full_name}</b> (${m.mahram_relation || '-'})</li>`).join('')}
+                            ${members.map(m => `<li class="truncate">• <b>${Utils.escapeHTML(m.full_name)}</b> (${Utils.escapeHTML(m.mahram_relation || '-')})</li>`).join('')}
                         </ul>
                     </div>
                 `).join('') || `<p class="text-xs text-slate-400 col-span-2">Belum ada kelompok keluarga/mahram.</p>`;
@@ -2386,9 +2449,9 @@
 
                     return `
                         <tr class="hover:bg-slate-50/80">
-                            <td class="py-3.5 px-4 font-bold text-xs text-emerald-800">${j.jamaah_code}</td>
-                            <td class="py-3.5 px-4 font-bold text-navy-900">${j.full_name}</td>
-                            <td class="py-3.5 px-4 text-xs">${pkg ? pkg.name : '-'}</td>
+                            <td class="py-3.5 px-4 font-bold text-xs text-emerald-800">${Utils.escapeHTML(j.jamaah_code)}</td>
+                            <td class="py-3.5 px-4 font-bold text-navy-900">${Utils.escapeHTML(j.full_name)}</td>
+                            <td class="py-3.5 px-4 text-xs">${Utils.escapeHTML(pkg ? pkg.name : '-')}</td>
                             <td class="py-3.5 px-4 text-xs">${Utils.formatIDR(price)}</td>
                             <td class="py-3.5 px-4 text-xs">${Utils.formatIDR(disc)}</td>
                             <td class="py-3.5 px-4 font-bold">${Utils.formatIDR(net)}</td>
@@ -2424,15 +2487,15 @@
                     return `
                         <tr class="hover:bg-slate-50/80">
                             <td class="py-3.5 px-4 text-xs">${Utils.formatDate(p.payment_date)}</td>
-                            <td class="py-3.5 px-4 font-mono text-xs font-bold">${p.trx_code}</td>
+                            <td class="py-3.5 px-4 font-mono text-xs font-bold">${Utils.escapeHTML(p.trx_code)}</td>
                             <td class="py-3.5 px-4 font-bold text-navy-900">${j ? j.full_name : '-'}</td>
                             <td class="py-3.5 px-4 font-extrabold text-emerald-800">${Utils.formatIDR(p.amount)}</td>
-                            <td class="py-3.5 px-4 text-xs font-semibold">${p.method}</td>
+                            <td class="py-3.5 px-4 text-xs font-semibold">${Utils.escapeHTML(p.method)}</td>
                             <td class="py-3.5 px-4">
                                 <button onclick="App.togglePaymentStatus('${p.id}')" title="Klik untuk ubah status Confirmed / Check"
-                                    class="px-2.5 py-1 rounded text-[11px] font-bold ${badge}">${p.status}</button>
+                                    class="px-2.5 py-1 rounded text-[11px] font-bold ${badge}">${Utils.escapeHTML(p.status)}</button>
                             </td>
-                            <td class="py-3.5 px-4 text-xs text-slate-500">${p.reference_note || '-'}</td>
+                            <td class="py-3.5 px-4 text-xs text-slate-500">${Utils.escapeHTML(p.reference_note || '-')}</td>
                             <td class="py-3.5 px-4 text-right space-x-1">
                                 <button onclick="App.printKwitansi('${p.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-amber-400 text-xs font-bold inline-flex items-center gap-1">
                                     <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
@@ -2478,9 +2541,9 @@
                         <div class="flex items-center gap-5">
                             ${logoHtml}
                             <div class="text-left">
-                                <h1 class="text-2xl font-black uppercase tracking-wide text-navy-900 leading-tight">${p.agency_name || 'Biro Perjalanan Umroh'}</h1>
-                                <p class="text-sm italic text-slate-600 font-serif mb-1">${p.ppiu_number || 'Penyelenggara Perjalanan Ibadah Umroh & Haji Khusus'}</p>
-                                <p class="text-xs text-slate-800 font-medium">${p.agency_address || '-'}</p>
+                                <h1 class="text-2xl font-black uppercase tracking-wide text-navy-900 leading-tight">${Utils.escapeHTML(p.agency_name || 'Biro Perjalanan Umroh')}</h1>
+                                <p class="text-sm italic text-slate-600 font-serif mb-1">${Utils.escapeHTML(p.ppiu_number || 'Penyelenggara Perjalanan Ibadah Umroh & Haji Khusus')}</p>
+                                <p class="text-xs text-slate-800 font-medium">${Utils.escapeHTML(p.agency_address || '-')}</p>
                                 <p class="text-xs text-slate-800 font-medium">Telp/WA: +${Utils.normalizePhone(p.agency_phone)} | Email: dev.${p.agency_name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0,6)}@gmail.com</p>
                             </div>
                         </div>
@@ -2538,21 +2601,21 @@
                             <div>
                                 <table class="text-sm">
                                     <tr><td class="w-32 py-1">Tanggal Transaksi</td><td>: <b>${Utils.formatDate(p.payment_date)}</b></td></tr>
-                                    <tr><td class="py-1">Kode Transaksi</td><td>: <b>${p.trx_code}</b></td></tr>
+                                    <tr><td class="py-1">Kode Transaksi</td><td>: <b>${Utils.escapeHTML(p.trx_code)}</b></td></tr>
                                 </table>
                                 
                                 <div class="mt-6 pt-3 border-t border-slate-300">
                                     <p class="font-bold text-slate-500 uppercase mb-2 tracking-wider text-xs">DATA TRAVEL :</p>
-                                    <p class="font-black text-navy-900 uppercase">${prof.agency_name}</p>
-                                    <p class="text-slate-800">${prof.agency_address}</p>
+                                    <p class="font-black text-navy-900 uppercase">${Utils.escapeHTML(prof.agency_name)}</p>
+                                    <p class="text-slate-800">${Utils.escapeHTML(prof.agency_address)}</p>
                                     <p class="text-slate-800">Telp: +${Utils.normalizePhone(prof.agency_phone)}</p>
                                 </div>
                             </div>
                             <div>
                                 <div class="mt-[74px] pt-3 border-t border-slate-300">
                                     <p class="font-bold text-slate-500 uppercase mb-2 tracking-wider text-xs">DATA JAMAAH :</p>
-                                    <p class="font-black text-navy-900 uppercase">${j.full_name}</p>
-                                    <p class="text-slate-800">${j.address || '-'}</p>
+                                    <p class="font-black text-navy-900 uppercase">${Utils.escapeHTML(j.full_name)}</p>
+                                    <p class="text-slate-800">${Utils.escapeHTML(j.address || '-')}</p>
                                     <p class="text-slate-800">Telp: +${Utils.normalizePhone(j.phone)}</p>
                                     <p class="text-slate-800">Email: ${j.jamaah_code.toLowerCase()}@jamaah.com</p>
                                 </div>
@@ -2570,10 +2633,10 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="font-mono">${p.trx_code}</td>
+                                    <td class="font-mono">${Utils.escapeHTML(p.trx_code)}</td>
                                     <td>${Utils.formatDate(p.payment_date)}</td>
-                                    <td class="font-bold uppercase">${j.full_name}</td>
-                                    <td>${pkg ? pkg.name : '-'}</td>
+                                    <td class="font-bold uppercase">${Utils.escapeHTML(j.full_name)}</td>
+                                    <td>${Utils.escapeHTML(pkg ? pkg.name : '-')}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2611,21 +2674,21 @@
                             <tbody>
                                 <tr>
                                     <td class="font-black text-base text-navy-900 bg-slate-50 py-3">${Utils.formatIDR(p.amount)}</td>
-                                    <td class="font-semibold py-3">${p.method}</td>
-                                    <td class="font-semibold py-3">${p.status}</td>
-                                    <td class="py-3">${p.reference_note || '-'}</td>
+                                    <td class="font-semibold py-3">${Utils.escapeHTML(p.method)}</td>
+                                    <td class="font-semibold py-3">${Utils.escapeHTML(p.status)}</td>
+                                    <td class="py-3">${Utils.escapeHTML(p.reference_note || '-')}</td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        ${prof.bank_info ? `<p class="text-xs text-slate-700 mt-4 px-2 border-l-4 border-amber-500"><b>Rekening Resmi Transfer:</b> ${prof.bank_info}</p>` : ''}
+                        ${prof.bank_info ? `<p class="text-xs text-slate-700 mt-4 px-2 border-l-4 border-amber-500"><b>Rekening Resmi Transfer:</b> ${Utils.escapeHTML(prof.bank_info)}</p>` : ''}
 
                         <div class="mt-12 flex justify-end">
                             <div class="text-center text-sm space-y-2 w-64">
                                 <p class="mb-4">Majalengka, ${Utils.formatDate(new Date().toISOString())}</p>
-                                <p class="font-bold text-navy-900">${prof.agency_name}</p>
+                                <p class="font-bold text-navy-900">${Utils.escapeHTML(prof.agency_name)}</p>
                                 <div id="print-qr-code" class="flex justify-center py-2"></div>
-                                <p class="font-extrabold underline text-navy-900">${prof.director_name}</p>
+                                <p class="font-extrabold underline text-navy-900">${Utils.escapeHTML(prof.director_name)}</p>
                                 <p class="text-xs text-slate-600">Direktur</p>
                             </div>
                         </div>
@@ -2664,22 +2727,22 @@
                             <div>
                                 <table class="text-sm">
                                     <tr><td class="w-32 py-1">Tanggal Cetak</td><td>: <b>${Utils.formatDate(new Date().toISOString())}</b></td></tr>
-                                    <tr><td class="py-1">Kode Mutasi</td><td>: <b>${j.jamaah_code}/${pkg ? pkg.code : 'UMR'}/${j.nik || '001'}</b></td></tr>
+                                    <tr><td class="py-1">Kode Mutasi</td><td>: <b>${Utils.escapeHTML(j.jamaah_code)}/${Utils.escapeHTML(pkg ? pkg.code : 'UMR')}/${Utils.escapeHTML(j.nik || '001')}</b></td></tr>
                                 </table>
                                 
                                 <div class="mt-6 pt-3 border-t border-slate-300">
                                     <p class="font-bold text-slate-500 uppercase mb-2 tracking-wider text-xs">DATA TRAVEL :</p>
-                                    <p class="font-black text-navy-900 uppercase">${prof.agency_name}</p>
-                                    <p class="text-slate-800">${prof.agency_address}</p>
+                                    <p class="font-black text-navy-900 uppercase">${Utils.escapeHTML(prof.agency_name)}</p>
+                                    <p class="text-slate-800">${Utils.escapeHTML(prof.agency_address)}</p>
                                     <p class="text-slate-800">Telp: +${Utils.normalizePhone(prof.agency_phone)}</p>
                                 </div>
                             </div>
                             <div>
                                 <div class="mt-[74px] pt-3 border-t border-slate-300">
                                     <p class="font-bold text-slate-500 uppercase mb-2 tracking-wider text-xs">DATA JAMAAH :</p>
-                                    <p class="font-black text-navy-900 uppercase">${j.full_name}</p>
-                                    <p class="text-slate-800">${j.address || '-'}</p>
-                                    <p class="text-slate-800">Telp: +${Utils.normalizePhone(j.phone)} | Kamar: <b>${j.room_type}</b></p>
+                                    <p class="font-black text-navy-900 uppercase">${Utils.escapeHTML(j.full_name)}</p>
+                                    <p class="text-slate-800">${Utils.escapeHTML(j.address || '-')}</p>
+                                    <p class="text-slate-800">Telp: +${Utils.normalizePhone(j.phone)} | Kamar: <b>${Utils.escapeHTML(j.room_type)}</b></p>
                                 </div>
                             </div>
                         </div>
@@ -2697,10 +2760,10 @@
                             <tbody>
                                 <tr>
                                     <td>${Utils.formatDate(j.created_at)}</td>
-                                    <td class="font-bold uppercase">${j.full_name}</td>
-                                    <td>${pkg ? pkg.name : '-'}</td>
+                                    <td class="font-bold uppercase">${Utils.escapeHTML(j.full_name)}</td>
+                                    <td>${Utils.escapeHTML(pkg ? pkg.name : '-')}</td>
                                     <td>${pkg ? Utils.formatDate(pkg.departure_date) : '-'}</td>
-                                    <td>${j.room_type}</td>
+                                    <td>${Utils.escapeHTML(j.room_type)}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2754,9 +2817,9 @@
                         <div class="mt-12 flex justify-end">
                             <div class="text-center text-sm space-y-2 w-64">
                                 <p class="mb-4">Majalengka, ${Utils.formatDate(new Date().toISOString())}</p>
-                                <p class="font-bold text-navy-900">${prof.agency_name}</p>
+                                <p class="font-bold text-navy-900">${Utils.escapeHTML(prof.agency_name)}</p>
                                 <div id="print-qr-code" class="flex justify-center py-2"></div>
-                                <p class="font-extrabold underline text-navy-900">${prof.director_name}</p>
+                                <p class="font-extrabold underline text-navy-900">${Utils.escapeHTML(prof.director_name)}</p>
                                 <p class="text-xs text-slate-600">Direktur</p>
                             </div>
                         </div>
@@ -2784,7 +2847,7 @@
                         
                         <div class="flex justify-between text-sm mb-8">
                             <table class="text-sm">
-                                <tr><td class="py-1 w-24">Nomor</td><td>: RK-${j.jamaah_code}/PT-UMR/${new Date().getFullYear()}</td></tr>
+                                <tr><td class="py-1 w-24">Nomor</td><td>: RK-${Utils.escapeHTML(j.jamaah_code)}/PT-UMR/${new Date().getFullYear()}</td></tr>
                                 <tr><td class="py-1">Perihal</td><td>: <b>Permohonan Pembuatan Paspor</b></td></tr>
                             </table>
                             <p>${Utils.formatDate(new Date().toISOString())}</p>
@@ -2792,7 +2855,7 @@
 
                         <div class="text-sm mb-8">
                             <p>Kepada Yth,</p>
-                            <p class="font-bold text-navy-900">Kepala ${j.imigrasi_city || 'Kantor Imigrasi Kelas I'}</p>
+                            <p class="font-bold text-navy-900">Kepala ${Utils.escapeHTML(j.imigrasi_city || 'Kantor Imigrasi Kelas I')}</p>
                             <p>Di Tempat</p>
                         </div>
 
@@ -2802,10 +2865,10 @@
 
                             <div class="px-8 my-4">
                                 <table class="w-full text-sm leading-loose">
-                                    <tr><td class="py-1 w-48 font-semibold">NIK</td><td>: ${j.nik || '-'}</td></tr>
-                                    <tr><td class="py-1 font-semibold">Nama Lengkap</td><td>: <b class="uppercase">${j.full_name}</b></td></tr>
-                                    <tr><td class="py-1 font-semibold">Tempat, Tgl Lahir</td><td>: ${j.birth_place || '-'}, ${Utils.formatDate(j.birth_date)}</td></tr>
-                                    <tr><td class="py-1 font-semibold align-top">Alamat Domisili</td><td class="align-top">: ${j.address || '-'}</td></tr>
+                                    <tr><td class="py-1 w-48 font-semibold">NIK</td><td>: ${Utils.escapeHTML(j.nik || '-')}</td></tr>
+                                    <tr><td class="py-1 font-semibold">Nama Lengkap</td><td>: <b class="uppercase">${Utils.escapeHTML(j.full_name)}</b></td></tr>
+                                    <tr><td class="py-1 font-semibold">Tempat, Tgl Lahir</td><td>: ${Utils.escapeHTML(j.birth_place || '-')}, ${Utils.formatDate(j.birth_date)}</td></tr>
+                                    <tr><td class="py-1 font-semibold align-top">Alamat Domisili</td><td class="align-top">: ${Utils.escapeHTML(j.address || '-')}</td></tr>
                                     <tr><td class="py-1 font-semibold">Rencana Keberangkatan</td><td>: ${pkg ? `${Utils.formatDate(pkg.departure_date)} s/d ${Utils.formatDate(pkg.return_date)}` : 'Segera'}</td></tr>
                                 </table>
                             </div>
@@ -2814,9 +2877,9 @@
 
                             <div class="px-8 my-4">
                                 <table class="w-full text-sm leading-loose">
-                                    <tr><td class="py-1 w-48 font-semibold">Nama Perusahaan</td><td>: <b class="uppercase">${prof.agency_name}</b></td></tr>
+                                    <tr><td class="py-1 w-48 font-semibold">Nama Perusahaan</td><td>: <b class="uppercase">${Utils.escapeHTML(prof.agency_name)}</b></td></tr>
                                     <tr><td class="py-1 font-semibold">Kontak / Telepon</td><td>: +${Utils.normalizePhone(prof.agency_phone)}</td></tr>
-                                    <tr><td class="py-1 font-semibold align-top">Alamat Kantor</td><td class="align-top">: ${prof.agency_address}</td></tr>
+                                    <tr><td class="py-1 font-semibold align-top">Alamat Kantor</td><td class="align-top">: ${Utils.escapeHTML(prof.agency_address)}</td></tr>
                                 </table>
                             </div>
 
@@ -2826,9 +2889,9 @@
                         <div class="mt-16 flex justify-end">
                             <div class="text-center text-sm space-y-2 w-72">
                                 <p class="mb-5">Majalengka, ${Utils.formatDate(new Date().toISOString())}</p>
-                                <p class="font-bold text-navy-900">${prof.agency_name}</p>
+                                <p class="font-bold text-navy-900">${Utils.escapeHTML(prof.agency_name)}</p>
                                 <div id="print-qr-code" class="flex justify-center py-2"></div>
-                                <p class="font-extrabold underline text-navy-900">${prof.director_name}</p>
+                                <p class="font-extrabold underline text-navy-900">${Utils.escapeHTML(prof.director_name)}</p>
                                 <p class="text-xs text-slate-600">Direktur Utama</p>
                             </div>
                         </div>
@@ -2856,7 +2919,7 @@
                         
                         <div class="flex justify-between text-sm mb-8">
                             <table class="text-sm">
-                                <tr><td class="py-1 w-24">Nomor</td><td>: SC-${j.jamaah_code}/PT-UMR/${new Date().getFullYear()}</td></tr>
+                                <tr><td class="py-1 w-24">Nomor</td><td>: SC-${Utils.escapeHTML(j.jamaah_code)}/PT-UMR/${new Date().getFullYear()}</td></tr>
                                 <tr><td class="py-1">Perihal</td><td>: <b>Permohonan Izin Cuti Umroh</b></td></tr>
                             </table>
                             <p>${Utils.formatDate(new Date().toISOString())}</p>
@@ -2864,7 +2927,7 @@
 
                         <div class="text-sm mb-8">
                             <p>Kepada Yth,</p>
-                            <p class="font-bold text-navy-900">Pimpinan / HRD ${j.job_company || 'Instansi Tempat Bekerja'}</p>
+                            <p class="font-bold text-navy-900">Pimpinan / HRD ${Utils.escapeHTML(j.job_company || 'Instansi Tempat Bekerja')}</p>
                             <p>Di Tempat</p>
                         </div>
 
@@ -2874,15 +2937,15 @@
 
                             <div class="px-8 my-4">
                                 <table class="w-full text-sm leading-loose">
-                                    <tr><td class="py-1 w-48 font-semibold">NIK</td><td>: ${j.nik || '-'}</td></tr>
-                                    <tr><td class="py-1 font-semibold">Nama Lengkap</td><td>: <b class="uppercase">${j.full_name}</b></td></tr>
-                                    <tr><td class="py-1 font-semibold">Tempat, Tgl Lahir</td><td>: ${j.birth_place || '-'}, ${Utils.formatDate(j.birth_date)}</td></tr>
-                                    <tr><td class="py-1 font-semibold align-top">Alamat Domisili</td><td class="align-top">: ${j.address || '-'}</td></tr>
+                                    <tr><td class="py-1 w-48 font-semibold">NIK</td><td>: ${Utils.escapeHTML(j.nik || '-')}</td></tr>
+                                    <tr><td class="py-1 font-semibold">Nama Lengkap</td><td>: <b class="uppercase">${Utils.escapeHTML(j.full_name)}</b></td></tr>
+                                    <tr><td class="py-1 font-semibold">Tempat, Tgl Lahir</td><td>: ${Utils.escapeHTML(j.birth_place || '-')}, ${Utils.formatDate(j.birth_date)}</td></tr>
+                                    <tr><td class="py-1 font-semibold align-top">Alamat Domisili</td><td class="align-top">: ${Utils.escapeHTML(j.address || '-')}</td></tr>
                                     <tr><td class="py-1 font-semibold">Tgl Keberangkatan</td><td>: <b>${pkg ? `${Utils.formatDate(pkg.departure_date)} s/d ${Utils.formatDate(pkg.return_date)}` : '-'}</b></td></tr>
                                 </table>
                             </div>
 
-                            <p class="indent-8">Dengan ini kami menyatakan bahwa nama tersebut di atas adalah benar calon jamaah umroh yang telah terdaftar secara resmi pada biro perjalanan kami (<b class="uppercase">${prof.agency_name}</b>).</p>
+                            <p class="indent-8">Dengan ini kami menyatakan bahwa nama tersebut di atas adalah benar calon jamaah umroh yang telah terdaftar secara resmi pada biro perjalanan kami (<b class="uppercase">${Utils.escapeHTML(prof.agency_name)}</b>).</p>
                             
                             <p class="indent-8">Untuk itu kami memohon kebijaksanaan Bapak/Ibu Pimpinan agar kiranya dapat memberikan izin cuti kepada yang bersangkutan selama pelaksanaan ibadah umroh berlangsung. Demikian surat permohonan izin cuti ini kami sampaikan, atas perhatian dan izin yang diberikan kami ucapkan terima kasih.</p>
                         </div>
@@ -2890,9 +2953,9 @@
                         <div class="mt-16 flex justify-end">
                             <div class="text-center text-sm space-y-2 w-72">
                                 <p class="mb-5">Majalengka, ${Utils.formatDate(new Date().toISOString())}</p>
-                                <p class="font-bold text-navy-900">${prof.agency_name}</p>
+                                <p class="font-bold text-navy-900">${Utils.escapeHTML(prof.agency_name)}</p>
                                 <div id="print-qr-code" class="flex justify-center py-2"></div>
-                                <p class="font-extrabold underline text-navy-900">${prof.director_name}</p>
+                                <p class="font-extrabold underline text-navy-900">${Utils.escapeHTML(prof.director_name)}</p>
                                 <p class="text-xs text-slate-600">Direktur Utama</p>
                             </div>
                         </div>
@@ -2924,7 +2987,7 @@
                             <div class="relative z-10">
                                 ${cardLogo}
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-amber-400">KARTU IDENTITAS JAMAAH UMROH</p>
-                                <h3 class="font-black text-lg mt-1 tracking-tight">${prof.agency_name}</h3>
+                                <h3 class="font-black text-lg mt-1 tracking-tight">${Utils.escapeHTML(prof.agency_name)}</h3>
                             </div>
                         </div>
                         <div class="p-6 text-center space-y-3 bg-white relative">
@@ -2937,15 +3000,15 @@
                                     ${j.full_name.charAt(0)}
                                 </div>
                                 <div class="mt-4">
-                                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs shadow-sm">${j.jamaah_code}</span>
-                                    <h2 class="text-xl font-black text-navy-900 uppercase mt-2 leading-tight">${j.full_name}</h2>
-                                    <p class="text-sm text-slate-500 font-semibold mt-1">Paspor: <b>${j.passport_number || '-'}</b></p>
+                                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs shadow-sm">${Utils.escapeHTML(j.jamaah_code)}</span>
+                                    <h2 class="text-xl font-black text-navy-900 uppercase mt-2 leading-tight">${Utils.escapeHTML(j.full_name)}</h2>
+                                    <p class="text-sm text-slate-500 font-semibold mt-1">Paspor: <b>${Utils.escapeHTML(j.passport_number || '-')}</b></p>
                                 </div>
                                 <div class="text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200 text-left space-y-1.5 mt-4 shadow-sm">
-                                    <p><b>Kloter/Batch:</b> ${pkg ? pkg.name : '-'}</p>
-                                    <p><b>Maskapai:</b> ${pkg ? pkg.airline : '-'}</p>
-                                    <p><b>Kamar:</b> ${j.room_type} (${j.room_group || '-'})</p>
-                                    <p><b>Mahram:</b> ${j.mahram_group || '-'}</p>
+                                    <p><b>Kloter/Batch:</b> ${Utils.escapeHTML(pkg ? pkg.name : '-')}</p>
+                                    <p><b>Maskapai:</b> ${Utils.escapeHTML(pkg ? pkg.airline : '-')}</p>
+                                    <p><b>Kamar:</b> ${Utils.escapeHTML(j.room_type)} (${Utils.escapeHTML(j.room_group || '-')})</p>
+                                    <p><b>Mahram:</b> ${Utils.escapeHTML(j.mahram_group || '-')}</p>
                                     <p class="pt-2 mt-2 border-t border-slate-200"><b>Darurat Travel:</b> +${Utils.normalizePhone(prof.agency_phone)}</p>
                                 </div>
                                 <div id="print-qr-code" class="flex justify-center pt-4 mt-2"></div>
@@ -3018,7 +3081,7 @@
                 e.preventDefault();
                 const id = document.getElementById('jm-id').value;
                 const payload = {
-                    user_id: State.currentUser.id,
+                    user_id: State.workspaceUserId || State.currentUser.id,
                     jamaah_code: document.getElementById('jm-code').value.trim(),
                     nik: document.getElementById('jm-nik').value.trim(),
                     crm_stage: document.getElementById('jm-stage').value,
@@ -3106,7 +3169,7 @@
                 const id = document.getElementById('pk-id').value;
                 const selectedTheme = document.getElementById('pk-theme').value || 'makkah';
                 const dbPayload = {
-                    user_id: State.currentUser.id,
+                    user_id: State.workspaceUserId || State.currentUser.id,
                     code: document.getElementById('pk-code').value.trim(),
                     name: document.getElementById('pk-name').value.trim(),
                     departure_date: document.getElementById('pk-dep-date').value,
@@ -3160,7 +3223,7 @@
                 const jamaahId = document.getElementById('pay-jamaah-id').value;
                 const newPay = {
                     id: crypto.randomUUID(),
-                    user_id: State.currentUser.id,
+                    user_id: State.workspaceUserId || State.currentUser.id,
                     jamaah_id: jamaahId,
                     trx_code: document.getElementById('pay-code').value.trim(),
                     payment_date: document.getElementById('pay-date').value,
@@ -3198,6 +3261,43 @@
             /**
              * SUPER ADMIN CONTROL ROOM
              */
+            async loadAccountDirectory() {
+                const result=await SafarAuth.accountRequest(cloudClient,{action:'accounts'});
+                State.accountDirectory=result.accounts;
+                const select=document.getElementById('account-scope');
+                select.replaceChildren(new Option('Semua akun',''));
+                for(const account of result.accounts) if(account.user_id) select.add(new Option(account.email,account.user_id));
+                select.value=State.workspaceUserId||'';
+            },
+            async selectAccount(id) {
+                if(!State.isSuperAdmin) return;
+                const account=State.accountDirectory.find(a=>a.user_id===id);
+                if(id && !account) return;
+                document.getElementById('account-scope').disabled=true;
+                try {
+                    State.workspaceUserId=account?.user_id||null;
+                    State.workspaceEmail=account?.email||null;
+                    State.agencyProfile={is_setup:false,agency_name:'Belum Setup'};
+                    document.getElementById('account-scope-status').textContent=account ? 'Mengelola data: '+account.email : 'Semua akun — data baru disimpan pada akun admin.';
+                    await this.fetchWorkspaceData(null,false,true);
+                } finally {document.getElementById('account-scope').disabled=false;}
+            },
+            async inviteAccount(email,role='agent') {
+                const result=await SafarAuth.accountRequest(cloudClient,{action:'invite',email,role});
+                const link=new URL(location.pathname,location.origin);
+                link.hash=new URLSearchParams({invite:result.token,email:result.email}).toString();
+                document.getElementById('invitation-link').value=link.href;
+                document.getElementById('invitation-result').hidden=false;
+                await this.fetchWorkspaceData(null,false,true);
+                await this.loadAccountDirectory();
+            },
+            async renewInvitation(id) {
+                if(!State.isSuperAdmin) return;
+                const license=State.licenses.find(l=>l.id===id);
+                if(!license) return;
+                try {await this.inviteAccount(license.email);}
+                catch(error){Utils.toast(error.message,'error');}
+            },
             renderSuperAdminTable() {
                 const tbody = document.getElementById('superadmin-users-body');
                 if (!tbody) return;
@@ -3216,18 +3316,19 @@
                     const isPendingSetup = !lic.agency_name || lic.agency_name === 'Belum Setup' || lic.agency_name === 'Travel Umroh Berkah';
                     const agencyInfo = isPendingSetup
                         ? `<span class="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">⏳ Menunggu Setup Wizard Buyer</span>`
-                        : `<span class="font-bold text-navy-900">${lic.agency_name}</span>`;
+                        : `<span class="font-bold text-navy-900">${Utils.escapeHTML(lic.agency_name)}</span>`;
 
                     return `
                         <tr class="hover:bg-slate-50">
-                            <td class="py-3.5 px-4 font-bold text-navy-900">${lic.email}</td>
+                            <td class="py-3.5 px-4 font-bold text-navy-900">${Utils.escapeHTML(lic.email)}</td>
                             <td class="py-3.5 px-4">${agencyInfo}</td>
-                            <td class="py-3.5 px-4 uppercase text-xs font-extrabold">${lic.role}</td>
+                            <td class="py-3.5 px-4 uppercase text-xs font-extrabold">${Utils.escapeHTML(lic.role)}</td>
                             <td class="py-3.5 px-4">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase ${badge}">${lic.status}</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase ${badge}">${Utils.escapeHTML(lic.status)}</span>
                             </td>
                             <td class="py-3.5 px-4 text-xs text-slate-500">${Utils.formatDate(lic.created_at)}</td>
                             <td class="py-3.5 px-4 text-right space-x-1">
+                                <button onclick="App.renewInvitation('${lic.id}')" class="px-2.5 py-1 rounded-lg border text-xs">Tautan Aktivasi</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'active')" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold">Aktifkan</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'frozen')" class="px-2.5 py-1 rounded-lg bg-amber-500 text-navy-900 text-xs font-bold">Bekukan</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'blocked')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white text-xs font-bold">Blokir</button>
@@ -3252,27 +3353,15 @@
                     return Utils.toast('Email buyer ini sudah terdaftar di dalam whitelist.', 'error');
                 }
 
-                const newLic = {
-                    id: crypto.randomUUID(),
-                    email,
-                    agency_name: 'Belum Setup',
-                    role,
-                    status: 'active',
-                    created_at: new Date().toISOString()
-                };
-
-                State.licenses.unshift(newLic);
-                if (isCloudConfigured) {
-                    const { error } = await cloudClient.from('safarops_licenses').insert([newLic]);
-                    if (error) {
-                        return Utils.toast(`Gagal menyimpan ke database: ${error.message}`, 'error');
-                    }
-                }
-                localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
-
-                e.target.reset();
-                this.renderAll();
-                Utils.toast(`Email ${email} berhasil dimasukkan ke Whitelist! Buyer kini dapat aktivasi dan mengisi Setup Wizard.`);
+                const button=e.target.querySelector('button[type="submit"]');
+                if(button.disabled)return;
+                button.disabled=true;
+                try {
+                    await this.inviteAccount(email,role);
+                    e.target.reset();
+                    Utils.toast('Akses diberikan. Bagikan tautan aktivasi secara pribadi kepada pemilik email.');
+                } catch(error){Utils.toast(error.message,'error');}
+                finally{button.disabled=false;}
             },
 
             async updateLicenseStatus(id, status) {
@@ -3281,7 +3370,7 @@
                 if (!item) return;
                 item.status = status;
                 if (isCloudConfigured) await cloudClient.from('safarops_licenses').update({ status }).eq('id', id);
-                localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
+                if(!isCloudConfigured) localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
                 this.renderAll();
                 Utils.toast(`Status akun ${item.email} diubah menjadi ${status.toUpperCase()}.`);
             },
@@ -3291,7 +3380,7 @@
                 if (!confirm('Hapus lisensi email buyer ini dari whitelist?')) return;
                 State.licenses = State.licenses.filter(l => l.id !== id);
                 if (isCloudConfigured) await cloudClient.from('safarops_licenses').delete().eq('id', id);
-                localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
+                if(!isCloudConfigured) localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
                 this.renderAll();
                 Utils.toast('Lisensi pengguna telah dihapus.');
             },
@@ -3300,7 +3389,7 @@
              * DUMMY DATA GENERATOR
              */
             async injectDummyData() {
-                const uid = State.currentUser.id;
+                const uid = State.workspaceUserId || State.currentUser.id;
                 const pkg1Id = crypto.randomUUID();
                 const pkg2Id = crypto.randomUUID();
 
