@@ -1,0 +1,117 @@
+<div id="tab-settings" class="tab-pane hidden max-w-4xl">
+                    <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                            <div>
+                                <h3 class="font-extrabold text-lg text-navy-900">Pengaturan Identitas, Logo & Banner Kop Surat Travel</h3>
+                                <p class="text-xs text-slate-500">Data dan aset visual ini otomatis dicetak pada Kop Kwitansi Pembayaran, Riwayat Mutasi, Surat Imigrasi, Surat Cuti, dan Kartu ID Jamaah.</p>
+                            </div>
+                            <button type="button" onclick="App.openOnboardingWizard(true)" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center gap-1.5">
+                                <i data-lucide="wand-2" class="w-4 h-4 text-emerald-700"></i>
+                                <span>Buka Panduan Setup Wizard</span>
+                            </button>
+                        </div>
+
+                        <form id="agency-profile-form" onsubmit="App.saveAgencyProfile(event)" class="space-y-6">
+                            <!-- Upload Logo & Banner di Pengaturan -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-4">
+                                    <div id="prof-logo-preview" class="w-20 h-20 rounded-2xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                        <i data-lucide="image" class="w-7 h-7 text-slate-300"></i>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <p class="text-xs font-extrabold text-navy-900">Logo Biro Travel</p>
+                                        <p class="text-[11px] text-slate-500">Tampil di Kop Surat & ID Card</p>
+                                        <div class="flex items-center gap-2 pt-1">
+                                            <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-amber-400 text-[11px] font-bold">
+                                                <span>Upload Logo</span>
+                                                <input type="file" accept="image/*" class="hidden" onchange="App.handleImageUpload(event, 'logo', 'prof-logo-preview')">
+                                            </label>
+                                            <button type="button" onclick="App.clearBrandingAsset('logo')" class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-red-50 text-red-600 text-[11px] font-bold">Hapus</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-4">
+                                    <div id="prof-banner-preview" class="w-28 h-20 rounded-2xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                        <i data-lucide="image" class="w-7 h-7 text-slate-300"></i>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <p class="text-xs font-extrabold text-navy-900">Banner Header Travel</p>
+                                        <p class="text-[11px] text-slate-500">Tampil di Dashboard & Banner Kop</p>
+                                        <div class="flex items-center gap-2 pt-1">
+                                            <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-navy-900 text-[11px] font-extrabold">
+                                                <span>Upload Banner</span>
+                                                <input type="file" accept="image/*" class="hidden" onchange="App.handleImageUpload(event, 'banner', 'prof-banner-preview')">
+                                            </label>
+                                            <button type="button" onclick="App.clearBrandingAsset('banner')" class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-red-50 text-red-600 text-[11px] font-bold">Hapus</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pilihan Cepat Preset Banner Haramain di Pengaturan -->
+                            <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100">
+                                <p class="text-xs font-extrabold text-emerald-950 mb-2">Galeri Tema Banner Haramain (Klik untuk menerapkan langsung):</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <button type="button" onclick="App.selectPresetBanner('https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=1200&q=80')" class="group relative h-16 rounded-xl overflow-hidden border border-emerald-200 hover:border-amber-500 transition text-left">
+                                        <img src="https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=600&q=70" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-navy-900/50 flex items-center justify-center">
+                                            <span class="text-[11px] font-bold text-white">🕋 Makkah Al-Mukarramah</span>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="App.selectPresetBanner('https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1200&q=80')" class="group relative h-16 rounded-xl overflow-hidden border border-emerald-200 hover:border-amber-500 transition text-left">
+                                        <img src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=600&q=70" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-navy-900/50 flex items-center justify-center">
+                                            <span class="text-[11px] font-bold text-white">🕌 Madinah Al-Munawwarah</span>
+                                        </div>
+                                    </button>
+                                    <button type="button" onclick="App.selectPresetBanner('https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1200&q=80')" class="group relative h-16 rounded-xl overflow-hidden border border-emerald-200 hover:border-amber-500 transition text-left">
+                                        <img src="https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=600&q=70" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 bg-navy-900/50 flex items-center justify-center">
+                                            <span class="text-[11px] font-bold text-white">✨ Luxury Islamic Gold</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Resmi Biro Travel Umroh *</label>
+                                    <input type="text" id="prof-name" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nomor SK PPIU / Izin Kemenag</label>
+                                    <input type="text" id="prof-ppiu" placeholder="SK PPIU No. U.445 Tahun 2024" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Alamat Lengkap Kantor & Kota *</label>
+                                <input type="text" id="prof-address" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nomor Telepon / WhatsApp Resmi *</label>
+                                    <input type="text" id="prof-phone" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Direktur Penandatangan *</label>
+                                    <input type="text" id="prof-director" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Info Rekening Bank Resmi Travel (Tercetak di Kwitansi)</label>
+                                <input type="text" id="prof-bank" placeholder="BSI 7123456789 a.n PT Wisata Haromain" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+                            </div>
+
+                            <div class="pt-2">
+                                <button type="submit" class="px-6 py-3 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-amber-400 font-extrabold text-xs shadow-lg flex items-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                    <span>Simpan Seluruh Pengaturan Kop Surat & Branding</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>

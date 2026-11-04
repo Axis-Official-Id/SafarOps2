@@ -1,0 +1,57 @@
+<div id="tab-manifest" class="tab-pane hidden space-y-6">
+
+                    <!-- Banner Visual Nuansa Masjid Nabawi Madinah -->
+                    <div class="relative rounded-3xl overflow-hidden bg-emerald-950 text-white p-8 md:p-12 min-h-[220px] flex flex-col justify-center shadow-lg border border-emerald-800/40">
+                        <img src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1400&q=80" alt="Madinah" class="absolute inset-0 w-full h-full object-cover opacity-30">
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-950 via-emerald-900/85 to-transparent"></div>
+                        <div class="relative z-10 flex flex-wrap items-center justify-between gap-6 w-full">
+                            <div class="max-w-xl">
+                                <span class="px-3 py-1 rounded-full bg-amber-400 text-navy-900 text-[10px] font-extrabold uppercase tracking-wider shadow-sm">Pemberkasan, Imigrasi & Akomodasi Hotel</span>
+                                <h3 class="text-2xl md:text-3xl font-extrabold mt-3 drop-shadow">Manifest Jamaah & Checklist Dokumen</h3>
+                                <p class="text-sm text-emerald-100 mt-2">Klik tombol berkas (KTP, KK, Paspor, dll) untuk update status secara real-time, serta cetak Surat Paspor, Surat Cuti & ID Card Jamaah langsung dari tabel.</p>
+                            </div>
+                            <button onclick="App.openJamaahModal()" class="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-navy-900 font-extrabold text-sm flex items-center gap-2 shadow-xl">
+                                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                                <span>+ Tambah Manifest Jamaah</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-600">
+                                        <th class="py-3.5 px-3">Kode / NIK</th>
+                                        <th class="py-3.5 px-3">Nama Jamaah & Kontak</th>
+                                        <th class="py-3.5 px-3">Batch & Paspor</th>
+                                        <th class="py-3.5 px-3">Kamar & Kelompok Mahram</th>
+                                        <th class="py-3.5 px-3">Checklist 5 Berkas Wajib</th>
+                                        <th class="py-3.5 px-3">Progres Berkas</th>
+                                        <th class="py-3.5 px-3 text-right">Cetak Surat Resmi & Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="manifest-table-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Visual Pengelompokan Kamar (Rooming List) & Keluarga (Mahram) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i data-lucide="bed-double" class="w-5 h-5 text-emerald-700"></i>
+                                <h4 class="font-extrabold text-navy-900 text-sm">Daftar Pengelompokan Kamar (Rooming List)</h4>
+                            </div>
+                            <div id="rooming-list-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i data-lucide="heart-handshake" class="w-5 h-5 text-amber-500"></i>
+                                <h4 class="font-extrabold text-navy-900 text-sm">Daftar Kelompok Keluarga (Mahram)</h4>
+                            </div>
+                            <div id="mahram-list-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
+                    </div>
+                </div>

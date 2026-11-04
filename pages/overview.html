@@ -1,0 +1,104 @@
+<div id="tab-overview" class="tab-pane space-y-6">
+
+                    <!-- Banner Identitas Biro Travel -->
+                    <div id="agency-hero-banner" class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-950 via-emerald-900 to-navy-900 text-white p-8 md:p-12 min-h-[220px] md:min-h-[260px] flex flex-col justify-center shadow-xl border border-emerald-700/40">
+                        <div id="agency-hero-bg" class="absolute inset-0 opacity-35 bg-cover bg-center pointer-events-none transition-all duration-500" style="background-image: url('assets/jejakimani-home-video-poster.webp');"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-900/75 to-navy-900/80 pointer-events-none"></div>
+                        <div class="relative z-10 flex flex-wrap items-center justify-between gap-6 w-full">
+                            <div class="flex items-center gap-6">
+                                <div id="hero-logo-box" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white/15 backdrop-blur border border-white/25 flex items-center justify-center overflow-hidden shadow-lg shrink-0">
+                                    <span class="text-4xl">🕋</span>
+                                </div>
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span id="hero-ppiu-badge" class="px-2.5 py-1 rounded-full bg-amber-400 text-navy-900 text-[10px] font-extrabold uppercase shadow-sm">Biro Umroh Resmi</span>
+                                        <span class="px-2.5 py-1 rounded-full bg-white/15 text-emerald-50 text-[10px] font-bold backdrop-blur border border-white/20">Executive Workspace</span>
+                                    </div>
+                                    <h3 id="hero-agency-name" class="text-2xl md:text-3xl font-extrabold mt-2.5 tracking-tight text-white drop-shadow-md">PT. Wisata Haromain Tour & Travel</h3>
+                                    <p id="hero-agency-address" class="text-sm text-emerald-100 mt-1 font-medium">Jl. Majalengka Utama No. 76, Jawa Barat</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="App.switchTab('packages')" class="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-navy-900 text-sm font-extrabold flex items-center gap-2 shadow-lg transition">
+                                    <i data-lucide="plane-takeoff" class="w-4 h-4"></i>
+                                    <span>Kelola Paket Umroh</span>
+                                </button>
+                                <button onclick="App.switchTab('settings')" class="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white text-sm font-bold backdrop-blur flex items-center gap-2 border border-white/20 transition">
+                                    <i data-lucide="image" class="w-4 h-4 text-amber-400"></i>
+                                    <span>Ubah Banner</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Ringkasan KPI -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <div class="premium-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-13 h-13 p-3.5 rounded-2xl bg-emerald-800 text-amber-400 shadow-md shadow-emerald-900/15">
+                                <i data-lucide="coins" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Transaksi Umroh</p>
+                                <h3 id="kpi-total-omzet" class="text-xl font-extrabold text-navy-900 mt-0.5">Rp 0</h3>
+                                <span id="kpi-total-jamaah" class="text-[11px] font-semibold text-emerald-700">0 Total Jamaah & Leads</span>
+                            </div>
+                        </div>
+
+                        <div class="premium-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-13 h-13 p-3.5 rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
+                                <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Sudah Pembayaran</p>
+                                <h3 id="kpi-total-paid" class="text-xl font-extrabold text-emerald-700 mt-0.5">Rp 0</h3>
+                                <span class="text-[11px] text-slate-500">Dana Masuk Terkonfirmasi</span>
+                            </div>
+                        </div>
+
+                        <div class="premium-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-13 h-13 p-3.5 rounded-2xl bg-red-600 text-white shadow-md shadow-red-600/20">
+                                <i data-lucide="clock" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Sisa Tagihan Jamaah</p>
+                                <h3 id="kpi-total-unpaid" class="text-xl font-extrabold text-red-600 mt-0.5">Rp 0</h3>
+                                <span class="text-[11px] text-slate-500">Harga Paket - Total Bayar</span>
+                            </div>
+                        </div>
+
+                        <div class="premium-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4">
+                            <div class="w-13 h-13 p-3.5 rounded-2xl bg-amber-500 text-navy-900 shadow-md shadow-amber-500/20">
+                                <i data-lucide="trending-up" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Rasio Konversi Lunas</p>
+                                <h3 id="kpi-conversion-rate" class="text-xl font-extrabold text-navy-900 mt-0.5">0%</h3>
+                                <span id="kpi-doc-avg" class="text-[11px] text-slate-500">Rata-rata Dokumen: 0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grafik Visual & Distribusi Pipeline -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="font-bold text-navy-900 flex items-center gap-2"><i data-lucide="chart-no-axes-combined" class="w-5 h-5 text-emerald-700" aria-hidden="true"></i>Tren Pembayaran Masuk</h3>
+                                    <p class="text-xs text-slate-500">Rekapitulasi kas masuk berdasarkan riwayat mutasi pembayaran</p>
+                                </div>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="financeChart"></canvas>
+                            </div>
+                            <div class="chart-controls"><label for="finance-range">Periode</label><select id="finance-range" onchange="App.renderKPIsAndCharts()"><option value="6">6 bulan terakhir</option><option value="12">12 bulan terakhir</option><option value="year">Tahun ini</option><option value="all">Semua riwayat</option></select></div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                            <h3 class="font-bold text-navy-900 mb-1">Distribusi Status Pipeline CRM</h3>
+                            <p class="text-xs text-slate-500 mb-4">Proporsi jamaah dari tahap Leads hingga Siap Berangkat</p>
+                            <div class="h-64 flex items-center justify-center">
+                                <canvas id="pipelineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>

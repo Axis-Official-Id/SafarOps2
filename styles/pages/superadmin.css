@@ -1,0 +1,1 @@
+#tab-superadmin{min-width:0}#tab-superadmin>div:has(#superadmin-users-body){padding:0;border-radius:16px;overflow:auto;max-width:100%;border:1px solid #dfe4db}#tab-superadmin table{border-collapse:separate;border-spacing:0;width:100%}#superadmin-users-body td{overflow-wrap:anywhere}#superadmin-users-body td:last-child{min-width:260px}#superadmin-users-body button{margin:3px}

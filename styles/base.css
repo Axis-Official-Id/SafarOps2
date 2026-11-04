@@ -1,0 +1,64 @@
+
+        body { color: #0f172a; background-color: #f8fafc; overflow-x: hidden; }
+        .islamic-pattern {
+            background-color: #064e3b;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(251, 191, 36, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.18) 0%, transparent 45%),
+                radial-gradient(#047857 1px, transparent 1px),
+                radial-gradient(#047857 1px, #064e3b 1px);
+            background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px;
+            background-position: 0 0, 0 0, 0 0, 12px 12px;
+        }
+        .arabesque-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23fbbf24' stroke-width='0.6' stroke-opacity='0.18'%3E%3Cpath d='M30 0l15 15-15 15-15-15zM0 30l15 15-15 15-15-15zM60 30l15 15-15 15-15-15zM30 60l15 15-15 15-15-15z'/%3E%3Ccircle cx='30' cy='30' r='8'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .premium-card {
+            transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 35px -12px rgba(6, 78, 59, 0.14), 0 4px 12px -2px rgba(217, 119, 6, 0.08);
+        }
+        .kanban-col { min-height: 540px; }
+        .dragging { opacity: 0.5; transform: scale(0.98); }
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Pengaturan Khusus Cetak PDF / Print Dokumen Resmi (FASE 2) */
+        @media print {
+            @page { size: A4; margin: 15mm; }
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: absolute; left: 0; top: 0; width: 100%;
+                background: white !important; padding: 0 !important; margin: 0 !important;
+                box-shadow: none !important;
+                color: #000 !important;
+            }
+            .no-print { display: none !important; }
+            .watermark-print {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                opacity: 0.05 !important;
+                z-index: -10;
+                width: 60%;
+                max-width: 500px;
+                pointer-events: none;
+            }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
+            .print-table th, .print-table td { border: 1px solid #94a3b8; padding: 8px 12px; }
+            .print-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold; }
+        }

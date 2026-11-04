@@ -1,0 +1,71 @@
+<div id="tab-finance" class="tab-pane hidden space-y-6">
+
+                    <!-- Banner Visual Keuangan & Kwitansi -->
+                    <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-navy-900 via-emerald-950 to-emerald-900 text-white p-8 md:p-12 min-h-[220px] flex flex-col justify-center shadow-lg border border-emerald-800/40">
+                        <div class="absolute inset-0 arabesque-overlay opacity-35 pointer-events-none"></div>
+                        <div class="relative z-10 flex flex-wrap items-center justify-between gap-6 w-full">
+                            <div class="max-w-xl">
+                                <span class="px-3 py-1 rounded-full bg-amber-400 text-navy-900 text-[10px] font-extrabold uppercase tracking-wider shadow-sm">Kasir & Verifikasi Mutasi Pembayaran</span>
+                                <h3 class="text-2xl md:text-3xl font-extrabold mt-3 drop-shadow">Buku Besar Tagihan & Cetak Kwitansi</h3>
+                                <p class="text-sm text-emerald-100 mt-2">Setiap pembayaran DP, cicilan, maupun pelunasan otomatis memotong sisa tagihan jamaah dan menghasilkan Kwitansi PDF ber-QR Code presisi.</p>
+                            </div>
+                            <button onclick="App.openPaymentModal()" class="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-navy-900 font-extrabold text-sm flex items-center gap-2 shadow-xl transition">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                                <span>+ Input Pembayaran / Cicilan Baru</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Tagihan Jamaah & Tombol Riwayat Mutasi -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+                            <div>
+                                <h3 class="font-extrabold text-lg text-navy-900">Buku Besar Tagihan & Sisa Pembayaran Jamaah</h3>
+                                <p class="text-xs text-slate-500">Kalkulasi otomatis: Harga Paket dikurangi Diskon dan Total Pembayaran Masuk.</p>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-600">
+                                        <th class="py-3.5 px-4">Kode Jamaah</th>
+                                        <th class="py-3.5 px-4">Nama Jamaah</th>
+                                        <th class="py-3.5 px-4">Nama Keberangkatan</th>
+                                        <th class="py-3.5 px-4">Harga Paket</th>
+                                        <th class="py-3.5 px-4">Diskon</th>
+                                        <th class="py-3.5 px-4">Total Harga</th>
+                                        <th class="py-3.5 px-4 text-emerald-700">Sudah Bayar</th>
+                                        <th class="py-3.5 px-4 text-red-600">Sisa Tagihan</th>
+                                        <th class="py-3.5 px-4 text-right">Cetak Mutasi / Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="finance-jamaah-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Riwayat Transaksi Individual (Cetak Kwitansi Bukti Pembayaran) -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <h3 class="font-extrabold text-lg text-navy-900 mb-1">Riwayat Transaksi Pembayaran Masuk (Kwitansi Individual)</h3>
+                        <p class="text-xs text-slate-500 mb-5">Setiap transaksi tercatat dengan kode unik dan siap dicetak menjadi Kwitansi Bukti Pembayaran resmi ber-QR Code.</p>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-600">
+                                        <th class="py-3.5 px-4">Tanggal</th>
+                                        <th class="py-3.5 px-4">Kode Transaksi</th>
+                                        <th class="py-3.5 px-4">Nama Jamaah</th>
+                                        <th class="py-3.5 px-4">Jumlah Pembayaran</th>
+                                        <th class="py-3.5 px-4">Metode</th>
+                                        <th class="py-3.5 px-4">Status</th>
+                                        <th class="py-3.5 px-4">Catatan Referensi</th>
+                                        <th class="py-3.5 px-4 text-right">Aksi & Kwitansi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payments-history-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>

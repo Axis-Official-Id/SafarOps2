@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
+const {compose,pages}=require('./compose.cjs');
 const port = Number(process.argv[2] || process.env.PORT || 4173);
 const mime = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -21,6 +22,9 @@ const server = http.createServer((req, res) => {
   try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); }
   catch { res.writeHead(400).end(); return; }
   const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
+  if(relative==='index.html'||pages.some(p=>relative===p+'.html')){const html=compose(relative==='index.html'?'overview':relative.replace('.html',''));res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(req.method==='HEAD'?undefined:html);return;}
+  for(const name of ['workspace-app.js','theme-config.js','page-navigation.js','styled-select.js'])allowed.add(name);
+  if(/^styles\/(pages\/)?[a-z-]+\.css$/.test(relative))allowed.add(relative);
   if (!allowed.has(relative) && !/^assets\/[a-z0-9][a-z0-9._-]*$/i.test(relative)) {
     res.writeHead(404).end(); return;
   }

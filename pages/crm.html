@@ -1,0 +1,23 @@
+<div id="tab-crm" class="tab-pane hidden space-y-4">
+                    <!-- Banner Visual Header CRM -->
+                    <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-emerald-900 via-emerald-800 to-navy-900 text-white p-6 min-h-[140px] shadow-md flex flex-wrap items-center justify-between gap-4">
+                        <div class="absolute inset-0 arabesque-overlay opacity-35 pointer-events-none"></div>
+                        <div class="relative z-10 flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-amber-400 text-navy-900 flex items-center justify-center font-extrabold shadow-lg">
+                                <i data-lucide="columns" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-lg text-white">Visual Kanban Pipeline CRM Jamaah</h3>
+                                <p class="text-xs text-emerald-100 mt-1">Geser dan lepas (Drag & Drop) kartu jamaah antar kolom untuk memperbarui status pendaftaran secara instan.</p>
+                            </div>
+                        </div>
+                        <div class="relative z-10 flex items-center gap-2">
+                            <select id="crm-filter-package" onchange="App.renderAll()" class="px-4 py-2.5 rounded-xl border border-white/20 bg-white text-sm font-bold text-navy-900 shadow-sm outline-none">
+                                <option value="ALL">Semua Batch Keberangkatan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Papan Kanban 6 Tahap -->
+                    <div id="kanban-board" class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-auto pb-4"></div>
+                </div>

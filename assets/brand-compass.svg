@@ -1,8 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SafarOps compass">
-  <rect width="128" height="128" rx="27" fill="#0B4036"/>
-  <circle cx="64" cy="64" r="40" fill="none" stroke="#D4B24C" stroke-width="3"/>
-  <circle cx="64" cy="64" r="34" fill="none" stroke="#D4B24C" stroke-opacity=".35" stroke-width="1"/>
-  <path d="M64 24 76 64 64 57 52 64Z" fill="#D4B24C"/>
-  <path d="M64 104 52 64 64 71 76 64Z" fill="#F8F4E7"/>
-  <circle cx="64" cy="64" r="5" fill="#0B4036" stroke="#D4B24C" stroke-width="2"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><g><circle cx="48" cy="48" r="34" fill="none" stroke="#d4b24c" stroke-width="2.6"/><path d="m48 1 7 17-7-4-7 4ZM48 95l-6-16 6 4 6-4ZM1 48l17-7-4 7 4 7ZM95 48l-17 7 4-7-4-7Z" fill="#d4b24c"/><path d="m23 23 4 4m42 42 4 4m0-50-4 4M27 69l-4 4" stroke="#d4b24c" stroke-width="2" stroke-linecap="round"/><path d="m30 36 18-8 18 8-18 8Z" fill="#263a34" stroke="#e0c56c" stroke-width="1.5" stroke-linejoin="round"/><path d="M30 36v26l18 9V44Z" fill="#102c26" stroke="#e0c56c" stroke-width="1.5" stroke-linejoin="round"/><path d="M48 44v27l18-9V36Z" fill="#061e19" stroke="#e0c56c" stroke-width="1.5" stroke-linejoin="round"/><path d="m30 43 18 8 18-8v5l-18 8-18-8Z" fill="#d4b24c"/><path d="M54 55v9l5-2v-9Z" fill="#d4b24c"/></g></svg>

@@ -1,6 +1,16 @@
 # SafarOps sidebar, navigation, and page refinement
 
-Date: 4 November 2026 · Status: implementation-ready proposal, not implemented
+Date: 4 November 2026 · Status: UI implementation delivered; browser verification pending
+
+## Implementation record
+
+The sidebar now uses a measured minimum width, collapses to a 64px icon rail, keeps the admin action at the bottom, and reopens through the logo. The restored Kaaba/compass SVG comes from the sibling workspace identified below. Search lives below sidebar branding; Arabic and Indonesian reflection text form one source link. The chart has a styled keyboard-operated period popup; other selects share the new visual style. Phone navigation retains its existing menu.
+
+Seven source views live in `pages/`, with CSS in `styles/pages/`. Inline CSS, theme configuration, and the application controller have been extracted from `index.html`. The build emits eight reloadable documents, with allowlisted navigation and Back/Forward handling. Shared views remain mounted in each document because the existing controller and dialogs depend on their DOM; this preserves in-progress form values. This is a deliberate compatibility implementation, not isolated page bundles. Page-controller isolation and replacing the existing CDN dependency delivery remain follow-up engineering work from the proposal below.
+
+Verification: 40 Node tests pass, source checks pass, production build passes, and local HTTP checks pass for all eight pages, required assets, and private-source 404 responses. Tests cover direct-route restoration, Back to the root, and admin-route denial. These are local/unit results, not a new live Supabase authorization audit. Browser tools failed to initialize (`failed to write kernel assets`), so screenshots, drag/keyboard interaction, phone layout, and zoom checks remain unverified.
+
+The sections below retain the original proposal and acceptance criteria for comparison with this implementation record.
 
 ## 1. Goal and boundaries
 

@@ -1,0 +1,54 @@
+<div id="tab-superadmin" class="tab-pane hidden space-y-6">
+                    <div class="bg-gradient-to-r from-navy-900 to-emerald-900 text-white p-6 rounded-2xl shadow-lg flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <span class="px-2.5 py-1 rounded-full bg-amber-400 text-navy-900 text-[10px] font-extrabold uppercase">Panel Rahasia Pemilik SaaS</span>
+                            <h3 class="text-xl font-extrabold mt-2">Super Admin License & Access Control Room</h3>
+                            <p class="text-xs text-emerald-200 mt-0.5">Cukup masukkan email pembeli lisensi. Nama biro travel, logo, dan kelengkapan data akan diisi mandiri oleh pengguna melalui Setup Wizard saat pertama kali aktivasi.</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Whitelist Email Buyer -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <h4 class="font-bold text-sm text-navy-900 mb-1">Tambahkan Email Buyer ke Whitelist Lisensi</h4>
+                        <p class="text-xs text-slate-500 mb-4">Buyer yang emailnya terdaftar di bawah ini dapat langsung melakukan aktivasi kata sandi dan menjalankan Setup Wizard biro travel mereka.</p>
+                        <form onsubmit="App.addLicenseUser(event)" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input type="email" id="sa-new-email" required placeholder="Masukkan email buyer (contoh: agen1@gmail.com)" class="px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium focus:border-emerald-700 outline-none">
+                            <select id="sa-new-role" class="px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold">
+                                <option value="agent">User Lisensi (Agen Travel Umroh)</option>
+                                <option value="superadmin">Super Admin (Pemilik Sistem)</option>
+                            </select>
+                            <button type="submit" class="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold text-xs shadow flex items-center justify-center gap-2">
+                                <i data-lucide="key-round" class="w-4 h-4"></i>
+                                <span>+ Whitelist Email Buyer</span>
+                            </button>
+                        </form><div id="invitation-result" hidden class="p-4 my-4 border rounded-xl"><label for="invitation-link">Tautan aktivasi pribadi (sekali pakai, berlaku 7 hari)</label><input id="invitation-link" readonly class="w-full p-3 border rounded" onclick="this.select()"><button type="button" onclick="navigator.clipboard.writeText(document.getElementById('invitation-link').value).then(()=>Utils.toast('Tautan disalin. Bagikan hanya kepada pemilik email.')).catch(()=>Utils.toast('Pilih dan salin tautan secara manual.','error'))">Salin tautan</button><p>Bagikan hanya kepada pemilik email. Membuat tautan baru membatalkan tautan sebelumnya.</p></div>
+                        <div id="password-reset-result" hidden class="p-4 my-4 border border-amber-200 bg-amber-50 rounded-xl space-y-3">
+                            <p class="font-bold text-sm text-navy-900">Reset kata sandi siap dibagikan secara pribadi</p>
+                            <label for="temporary-password" class="block text-xs font-bold">Kata sandi sementara</label>
+                            <input id="temporary-password" readonly class="w-full p-3 border rounded" onclick="this.select()">
+                            <label for="password-reset-link" class="block text-xs font-bold">Tautan setup sekali pakai (berlaku 24 jam)</label>
+                            <input id="password-reset-link" readonly class="w-full p-3 border rounded" onclick="this.select()">
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" class="px-3 py-2 rounded-lg bg-navy-900 text-white text-xs font-bold" onclick="App.copyResetCredentials()">Salin instruksi reset</button>
+                            </div>
+                            <p class="text-xs text-slate-600">Pengguna harus masuk dengan kata sandi sementara melalui tautan ini, lalu membuat kata sandi pribadi minimal 6 karakter. Kata sandi pribadi tidak terlihat oleh admin.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Daftar Pengguna Lisensi -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-600">
+                                    <th class="py-3.5 px-4">Email Buyer Terlisensi</th>
+                                    <th class="py-3.5 px-4">Status Setup & Nama Biro Travel</th>
+                                    <th class="py-3.5 px-4">Role</th>
+                                    <th class="py-3.5 px-4">Status Akses</th>
+                                    <th class="py-3.5 px-4">Tanggal Whitelist</th>
+                                    <th class="py-3.5 px-4 text-right">Kontrol Darurat Real-Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="superadmin-users-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>

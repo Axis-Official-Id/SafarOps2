@@ -3,6 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
+const appSource=fs.readFileSync(require('node:path').join(__dirname,'../workspace-app.js'),'utf8');
 function interfaceForTest(){
  const nodes=new Map();
  const get=id=>{
@@ -13,9 +14,9 @@ function interfaceForTest(){
  };
  const context={document:{getElementById:get},State:{},cloudClient:{},SafarAuth:{async submit(){throw new Error('Email belum ditambahkan oleh administrator.');}}};
  vm.createContext(context);
- const start=html.indexOf('const App = {');
- const end=html.indexOf('// Staff initialization',start);
- vm.runInContext(html.slice(start,end)+'\nglobalThis.testApp=App;',context);
+ const start=appSource.indexOf('const App = {');
+ const end=appSource.indexOf('// Staff initialization',start);
+ vm.runInContext(appSource.slice(start,end)+'\nglobalThis.testApp=App;',context);
  return {app:context.testApp,get,context};
 }
 test('single-password activation submits and dismisses a server error without losing input',async()=>{

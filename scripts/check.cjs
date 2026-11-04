@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const html = require('./compose.cjs').compose();
 const css = fs.readFileSync(path.join(root, 'admin-theme.css'), 'utf8');
 const js = fs.readFileSync(path.join(root, 'public-site.js'), 'utf8');
 const assets = [...new Set([...html.matchAll(/(?:src|href|content)=["'](?:https?:\/\/[^"']+)?\/?(assets\/[^"']+)["']/g)].map(match => match[1]))];
@@ -17,3 +17,4 @@ if (!html.includes('id="auth-password"') || !html.includes('minlength="6"')) thr
 if (!js.includes('App.init()')) throw new Error('Workspace initialization missing');
 console.log(`Source check passed: ${assets.length} referenced local assets present.`);
 for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)) new (require('node:vm').Script)(script[1]);
+for(const file of ['workspace-app.js','page-navigation.js','workspace-layout.js','styled-select.js','theme-config.js'])new (require('node:vm').Script)(fs.readFileSync(path.join(root,file),'utf8'));
