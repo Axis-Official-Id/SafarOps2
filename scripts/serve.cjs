@@ -10,7 +10,7 @@ const mime = {
   '.webp': 'image/webp', '.png': 'image/png', '.ico': 'image/x-icon',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg'
 };
-const allowed = new Set(['index.html', 'admin-theme.css', 'public-site.js', 'public-config.js', 'validation.js', 'auth-flow.js']);
+const allowed = new Set(['index.html', 'admin-theme.css', 'public-site.js', 'public-config.js', 'validation.js', 'auth-flow.js', 'runtime-config.js', 'workspace-layout.js', 'workspace-layout.css']);
 
 const server = http.createServer((req, res) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') {

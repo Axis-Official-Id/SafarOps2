@@ -1,0 +1,18 @@
+#app-view{--sidebar-width:288px}
+#app-view>aside{position:fixed!important;inset:0 auto 0 0;width:var(--sidebar-width)!important;height:100dvh;max-height:100dvh;z-index:40;overflow:visible!important;display:flex;flex-direction:column;justify-content:flex-start}
+#app-view>aside>div.relative:first-of-type{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#app-view>aside>div.relative{min-height:0}
+#app-view>aside>div.relative:has(nav){flex:1;overflow-y:auto;overscroll-behavior:contain}
+#app-view>aside>div.relative:not(:has(nav)){flex-shrink:0}
+#app-view>main{margin-left:var(--sidebar-width);width:calc(100% - var(--sidebar-width))}
+#app-view.sidebar-closed>aside{visibility:hidden;pointer-events:none}
+#app-view.sidebar-closed>main{margin-left:0;width:100%}
+.sidebar-tools{display:flex;justify-content:space-between;padding:8px;gap:4px;flex-shrink:0;z-index:2}
+.sidebar-tools button,.sidebar-open{padding:10px;min-height:44px;border:1px solid #d4b24c70;border-radius:6px;font-size:12px}
+.sidebar-resizer{position:absolute;right:-5px;top:0;bottom:0;width:10px;cursor:col-resize;touch-action:none;z-index:4}
+.sidebar-resizer:hover,.sidebar-resizer:focus-visible{background:#d4b24c;outline:2px solid #062c25}
+.workspace-quote{padding:24px;background:#fffefa;border:1px solid #dfe4db;border-left:4px solid #d4b24c;border-radius:8px}
+.workspace-quote small{color:#63736a;font-size:11px}.workspace-quote blockquote{font-family:Georgia,serif;font-size:24px;line-height:1.5;margin:12px 0;color:#062c25}.workspace-quote a{font-size:12px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:1023px){#app-view>aside{width:min(var(--sidebar-width),calc(100vw - 32px))!important;box-shadow:8px 0 30px #0004}#app-view>main{margin-left:0;width:100%}#app-view>aside nav,#app-view>aside>div.relative{display:block!important}.sidebar-resizer{display:none}}
+@media(max-height:620px){#app-view>aside>div.relative:not(:has(nav))>div:first-child{display:none}}
+@media print{#app-view>main{margin:0!important;width:100%!important}}

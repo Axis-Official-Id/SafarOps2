@@ -9,6 +9,11 @@ create table if not exists public.safarops_invitations (
 alter table public.safarops_invitations enable row level security;
 revoke all on public.safarops_invitations from public, anon, authenticated;
 grant all on public.safarops_invitations to service_role;
+drop policy if exists invitations_no_client_access on public.safarops_invitations;
+create policy invitations_no_client_access on public.safarops_invitations
+ for all to anon, authenticated using (false) with check (false);
+-- This historical maintenance helper must never be callable over the Data API.
+revoke execute on function public.rls_auto_enable() from public, anon, authenticated;
 
 create or replace function private.safarops_access()
 returns boolean language sql stable security definer set search_path = '' as $$
@@ -44,7 +49,8 @@ create policy payments_owner_all on public.safarops_payments for all to authenti
  with check ((select private.safarops_access()) and (user_id=(select auth.uid()) or (select private.is_safarops_admin())));
 
 -- An authenticated owner can update profile fields, never role/email/status.
-create or replace function public.safarops_save_profile(profile jsonb)
+-- Keep the privileged implementation outside the exposed public schema.
+create or replace function private.safarops_save_profile(profile jsonb)
 returns void language plpgsql security definer set search_path = '' as $$
 begin
  if not private.safarops_access() then raise exception 'Access denied'; end if;
@@ -55,6 +61,15 @@ begin
  bank_info=profile->>'bank_info', logo_base64=profile->>'logo_base64',
  banner_base64=profile->>'banner_base64', is_setup=true
  where email=(select lower(email) from auth.users where id=auth.uid());
+end;
+$$;
+revoke all on function private.safarops_save_profile(jsonb) from public, anon;
+grant execute on function private.safarops_save_profile(jsonb) to authenticated;
+
+create or replace function public.safarops_save_profile(profile jsonb)
+returns void language plpgsql security invoker set search_path = '' as $$
+begin
+ perform private.safarops_save_profile(profile);
 end;
 $$;
 revoke all on function public.safarops_save_profile(jsonb) from public, anon;

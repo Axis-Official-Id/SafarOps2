@@ -21,6 +21,8 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
     <link rel="stylesheet" href="admin-theme.css">
+    <link rel="stylesheet" href="workspace-layout.css">
+    <script src="runtime-config.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Plus Jakarta Sans & Amiri (Nuansa Elegan & Islami) -->
@@ -943,6 +945,17 @@
                                 <span>+ Whitelist Email Buyer</span>
                             </button>
                         </form><div id="invitation-result" hidden class="p-4 my-4 border rounded-xl"><label for="invitation-link">Tautan aktivasi pribadi (sekali pakai, berlaku 7 hari)</label><input id="invitation-link" readonly class="w-full p-3 border rounded" onclick="this.select()"><button type="button" onclick="navigator.clipboard.writeText(document.getElementById('invitation-link').value).then(()=>Utils.toast('Tautan disalin. Bagikan hanya kepada pemilik email.')).catch(()=>Utils.toast('Pilih dan salin tautan secara manual.','error'))">Salin tautan</button><p>Bagikan hanya kepada pemilik email. Membuat tautan baru membatalkan tautan sebelumnya.</p></div>
+                        <div id="password-reset-result" hidden class="p-4 my-4 border border-amber-200 bg-amber-50 rounded-xl space-y-3">
+                            <p class="font-bold text-sm text-navy-900">Reset kata sandi siap dibagikan secara pribadi</p>
+                            <label for="temporary-password" class="block text-xs font-bold">Kata sandi sementara</label>
+                            <input id="temporary-password" readonly class="w-full p-3 border rounded" onclick="this.select()">
+                            <label for="password-reset-link" class="block text-xs font-bold">Tautan setup sekali pakai (berlaku 24 jam)</label>
+                            <input id="password-reset-link" readonly class="w-full p-3 border rounded" onclick="this.select()">
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" class="px-3 py-2 rounded-lg bg-navy-900 text-white text-xs font-bold" onclick="App.copyResetCredentials()">Salin instruksi reset</button>
+                            </div>
+                            <p class="text-xs text-slate-600">Pengguna harus masuk dengan kata sandi sementara melalui tautan ini, lalu membuat kata sandi pribadi minimal 12 karakter. Kata sandi pribadi tidak terlihat oleh admin.</p>
+                        </div>
                     </div>
 
                     <!-- Tabel Daftar Pengguna Lisensi -->
@@ -1285,13 +1298,9 @@
         /**
          * KONFIGURASI KONEKSI CLOUD WORKSPACE
          */
-        const CONFIG = {
-            CLOUD_ENDPOINT: 'https://ordxatirqolmduiferjk.supabase.co',
-            CLOUD_PUBLIC_KEY: 'sb_publishable_hfQu_7XJrrKs9RPfc0pjAA_JWXqbUua',
-            SUPER_ADMIN_EMAIL: 'admin@ruangkarir.site'
-        };
+        const CONFIG = window.SAFAROPS_CONFIG || {CLOUD_ENDPOINT:'', CLOUD_PUBLIC_KEY:''};
 
-        const isCloudConfigured = !CONFIG.CLOUD_ENDPOINT.includes('YOUR_PROJECT_ID');
+        const isCloudConfigured = Boolean(CONFIG.CLOUD_ENDPOINT && CONFIG.CLOUD_PUBLIC_KEY);
         const cloudClient = isCloudConfigured
             ? window.supabase.createClient(CONFIG.CLOUD_ENDPOINT, CONFIG.CLOUD_PUBLIC_KEY, {
                 auth: { persistSession: true, autoRefreshToken: true }
@@ -1436,7 +1445,7 @@
                 try {
                     const { data, error } = await cloudClient.auth.getUser();
                     if (error || !data?.user) return;
-                    const license = await SafarAuth.authorize(cloudClient, data.user, CONFIG.SUPER_ADMIN_EMAIL);
+                    const license = await SafarAuth.authorize(cloudClient, data.user);
                     await this.handleAuthenticatedUser(data.user, license);
                 } catch(error) { this.showAuthAlert(error.message, 'error'); }
             },
@@ -1501,7 +1510,7 @@
                             document.getElementById('auth-password').value=confirm.value='';
                             return;
                         }
-                        const result = await SafarAuth.submit(cloudClient, {email, password, confirmation:confirm.value, register:State.isRegisterMode, token:State.activationToken}, CONFIG.SUPER_ADMIN_EMAIL);
+                        const result = await SafarAuth.submit(cloudClient, {email, password, confirmation:confirm.value, register:State.isRegisterMode, token:State.activationToken});
                         if(result.pendingConfirmation) {
                             this.setAuthMode(false);
                             this.showAuthAlert('Periksa email untuk konfirmasi akun, lalu masuk dengan kata sandi yang Anda buat.', 'info');
@@ -1543,7 +1552,7 @@
                 document.getElementById('app-view').classList.remove('hidden');
                 document.getElementById('user-email-display').textContent = user.email;
 
-                const isSuperAdmin = SafarAuth.isAdmin(user, licenseRecord, CONFIG.SUPER_ADMIN_EMAIL);
+                const isSuperAdmin = SafarAuth.isAdmin(user, licenseRecord);
                 State.isSuperAdmin = isSuperAdmin;
                 document.getElementById('superadmin-menu').classList.toggle('hidden', !isSuperAdmin);
 
@@ -1688,7 +1697,6 @@
                     State.licenses = JSON.parse(raw);
                 } else {
                     State.licenses = [
-                        { id: 'lic-1', email: CONFIG.SUPER_ADMIN_EMAIL, agency_name: 'SafarOps HQ', role: 'superadmin', status: 'active', is_setup: true, created_at: '2026-01-10' }
                     ];
                     if(!isCloudConfigured) localStorage.setItem('safarops_global_licenses', JSON.stringify(State.licenses));
                 }
@@ -3295,8 +3303,43 @@
                 if(!State.isSuperAdmin) return;
                 const license=State.licenses.find(l=>l.id===id);
                 if(!license) return;
-                try {await this.inviteAccount(license.email);}
+                try {await this.inviteAccount(license.email,license.role);}
                 catch(error){Utils.toast(error.message,'error');}
+            },
+            async updateLicenseRole(id, role) {
+                if(!State.isSuperAdmin) return Utils.toast('Akses administrator diperlukan.','error');
+                const license=State.licenses.find(item=>item.id===id);
+                if(!license || license.role===role) return;
+                try {
+                    const result=await SafarAuth.accountRequest(cloudClient,{action:'set-role',email:license.email,role});
+                    license.role=result.role;
+                    this.renderAll();
+                    Utils.toast(`Peran ${license.email} diubah menjadi ${result.role==='superadmin'?'SUPER ADMIN':'USER'}.`);
+                } catch(error) {
+                    this.renderAll();
+                    Utils.toast(error.message,'error');
+                }
+            },
+            async resetUserPassword(id) {
+                if(!State.isSuperAdmin) return Utils.toast('Akses administrator diperlukan.','error');
+                const license=State.licenses.find(item=>item.id===id);
+                if(!license || !confirm(`Reset kata sandi untuk ${license.email}? Semua akses data akun akan dikunci sampai pengguna menyelesaikan setup kata sandi baru.`)) return;
+                try {
+                    const result=await SafarAuth.accountRequest(cloudClient,{action:'reset-password',email:license.email});
+                    const link=new URL(location.pathname,location.origin);
+                    link.hash=new URLSearchParams({setup:result.token,email:result.email}).toString();
+                    document.getElementById('temporary-password').value=result.temporary_password;
+                    document.getElementById('password-reset-link').value=link.href;
+                    document.getElementById('password-reset-result').hidden=false;
+                    Utils.toast('Kata sandi sementara dibuat. Bagikan hanya kepada pemilik email.');
+                } catch(error){Utils.toast(error.message,'error');}
+            },
+            async copyResetCredentials() {
+                const password=document.getElementById('temporary-password').value;
+                const link=document.getElementById('password-reset-link').value;
+                const message=`Tautan reset SafarOps: ${link}\nKata sandi sementara: ${password}\nMasuk melalui tautan tersebut lalu segera buat kata sandi pribadi minimal 12 karakter.`;
+                try {await navigator.clipboard.writeText(message); Utils.toast('Instruksi reset disalin.');}
+                catch {Utils.toast('Pilih dan salin data reset secara manual.','error');}
             },
             renderSuperAdminTable() {
                 const tbody = document.getElementById('superadmin-users-body');
@@ -3322,13 +3365,19 @@
                         <tr class="hover:bg-slate-50">
                             <td class="py-3.5 px-4 font-bold text-navy-900">${Utils.escapeHTML(lic.email)}</td>
                             <td class="py-3.5 px-4">${agencyInfo}</td>
-                            <td class="py-3.5 px-4 uppercase text-xs font-extrabold">${Utils.escapeHTML(lic.role)}</td>
+                            <td class="py-3.5 px-4">
+                                <select aria-label="Peran ${Utils.escapeHTML(lic.email)}" onchange="App.updateLicenseRole('${lic.id}',this.value)" class="px-2 py-1.5 rounded-lg border text-xs font-bold">
+                                    <option value="agent" ${lic.role==='agent'?'selected':''}>USER</option>
+                                    <option value="superadmin" ${lic.role==='superadmin'?'selected':''}>SUPER ADMIN</option>
+                                </select>
+                            </td>
                             <td class="py-3.5 px-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase ${badge}">${Utils.escapeHTML(lic.status)}</span>
                             </td>
                             <td class="py-3.5 px-4 text-xs text-slate-500">${Utils.formatDate(lic.created_at)}</td>
                             <td class="py-3.5 px-4 text-right space-x-1">
                                 <button onclick="App.renewInvitation('${lic.id}')" class="px-2.5 py-1 rounded-lg border text-xs">Tautan Aktivasi</button>
+                                <button onclick="App.resetUserPassword('${lic.id}')" class="px-2.5 py-1 rounded-lg border border-indigo-200 text-indigo-700 text-xs font-bold">Reset Password</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'active')" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold">Aktifkan</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'frozen')" class="px-2.5 py-1 rounded-lg bg-amber-500 text-navy-900 text-xs font-bold">Bekukan</button>
                                 <button onclick="App.updateLicenseStatus('${lic.id}', 'blocked')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white text-xs font-bold">Blokir</button>
@@ -3546,5 +3595,6 @@
     <script src="validation.js"></script>
     <script src="auth-flow.js"></script>
     <script src="public-site.js"></script>
+    <script src="workspace-layout.js"></script>
 </body>
 </html>
