@@ -120,6 +120,7 @@ WorkspaceForms.init();
             navToggle.setAttribute('aria-expanded', 'false');
             navToggle.setAttribute('aria-controls', 'workspace-navigation');
             navToggle.innerHTML = '<i data-lucide="menu" aria-hidden="true"></i> Menu';
+            navToggle.setAttribute('aria-label','Buka navigasi');
             sidebar.querySelector('nav').id = 'workspace-navigation';
             sidebar.querySelector('div.relative > div').appendChild(navToggle);
             navToggle.addEventListener('click', () => {
